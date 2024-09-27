@@ -28,6 +28,18 @@ const router = createRouter({
           component: () => import('../views/gifts.vue')
         }
       ]
+    },
+    {
+      path: '/recruit',
+      name: 'recruit',
+      component: () => import('../views/recruit/reIndex.vue'),
+      children: [
+        {
+          path: 'list',
+          name:'list',
+          component: () => import('../views/recruit/list.vue')
+        }
+      ]
     }
   ]
 })
