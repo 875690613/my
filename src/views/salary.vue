@@ -3,8 +3,8 @@ import { ref, computed, onUnmounted, watch, onMounted } from 'vue';
 import request from '@/utils/request'
 import { Html5Qrcode } from 'html5-qrcode';
 import { showToast } from 'vant';
-import VConsole from 'vconsole';
-const vConsole = new VConsole();
+// import VConsole from 'vconsole';
+// const vConsole = new VConsole();
 const isShow = ref(false);
 const isSend = ref(false);
 const loginParams = ref({});

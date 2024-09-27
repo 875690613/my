@@ -3,8 +3,8 @@ import { onMounted, onUnmounted } from 'vue';
 import request from '@/utils/request'
 import { encrypt } from '@/utils/secret';
 import { Html5Qrcode } from 'html5-qrcode';
-import VConsole from 'vconsole';
-const vConsole = new VConsole();
+// import VConsole from 'vconsole';
+// const vConsole = new VConsole();
 let step = $ref(0);
 let listData = $ref([])
 let loading = $ref(false);
