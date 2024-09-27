@@ -12,20 +12,26 @@ const router = createRouter({
     {
       path: '/welfare',
       name: 'welfare',
-      component: () => import('../views/welfare.vue'),
+      component: () => import('../views/welfare/welfareIndex.vue'),
+      redirect: '/welfare/welfareMenu',
       children: [
         {
-          path: '/salary',
+          path: 'welfareMenu',
+          name: 'welfareMenu',
+          component: () => import('../views/welfare/welfareMenu.vue')
+        },
+        {
+          path: 'salary',
           name: 'salary',
           // route level code-splitting
           // this generates a separate chunk (About.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
-          component: () => import('../views/salary.vue')
+          component: () => import('../views/welfare/salary.vue')
         },
         {
-          path: '/gifts',
+          path: 'gifts',
           name:'gifts',
-          component: () => import('../views/gifts.vue')
+          component: () => import('../views/welfare/gifts.vue')
         }
       ]
     },
@@ -38,6 +44,10 @@ const router = createRouter({
           path: 'list',
           name:'list',
           component: () => import('../views/recruit/list.vue')
+        },{
+          path: 'detail',
+          name:'detail',
+          component: () => import('../views/recruit/detail.vue')
         }
       ]
     }
