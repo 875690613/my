@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
-    <title>我的福利</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+  <title>我的福利</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+<script>
+  (function (draftWidth, n) {
+    function getRem() {
+      var html = document.querySelector("html");
+      // console.log('body: ' + document.body.clientWidth);
+      // console.log('el:' + document.body.clientWidth);
+      var w = document.body.clientWidth || document.documentElement.clientWidth;
+      var rem = (w / draftWidth) * n;
+      //  html.style.fontSize = rem + "px !important";
+      html.setAttribute("style", "font-size:" + rem + "px !important;")
+    }
+    getRem();
+    window.addEventListener("resize", function () {
+      getRem();
+    });
+  })(1080, 100);
+</script>
+
 </html>
