@@ -3,14 +3,13 @@ import { useRouter } from 'vue-router';
 import { showToast } from 'vant';
 import { onMounted } from 'vue';
 import api from '@/request/api'
-// let username = $ref('13771202326');
-// let password = $ref('zr123456');
-let username = $ref('');
-let password = $ref('');
+let username = $ref('13771202326');
+let password = $ref('zr123456');
+// let username = $ref('');
+// let password = $ref('');
 let toast = $ref(null)
 
 const router = useRouter();
-document.title = '我的项目查询'
 const onSubmit = async (values) => {
   toast = showLoadingToast({
     message: '加载中...',
@@ -29,7 +28,7 @@ const onSubmit = async (values) => {
     // 缓存token
     sessionStorage.setItem('token', data);
     // 路由跳转->订单列表
-    router.push('/myProject');
+    router.push('/welfare/myShop');
 
     
   } else {
@@ -43,12 +42,17 @@ const onSubmit = async (values) => {
 onMounted(() => {
   sessionStorage.clear();
 })
+
+// 导航-返回
+const onClickLeft = () => {
+  router.push('/welfare/welfareMenu');
+}
 </script>
 
 <template>
-  <van-nav-bar title="登录" fixed :border="false" />
+  <van-nav-bar title="登录" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft" />
   <main>
-    <div class="login-title">我的项目查询</div>
+    <div class="login-title">我的店铺</div>
     <van-form @submit="onSubmit">
         <van-cell-group inset>
             <van-field
@@ -79,11 +83,19 @@ onMounted(() => {
 </template>
 
 <style scoped>
+:deep(.van-cell-group) {
+  background: white!important;
+}
+:deep(.van-field__label) {
+  color: #333333;
+}
+:deep(.van-field__control) {
+  color: #333333;
+}
 .login-title {
   font-size: 22px;
   color: #666666;
   text-align: center;
-  margin: 16px;
   padding: 120px 20px 50px 20px;
 
 }
