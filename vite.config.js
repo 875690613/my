@@ -72,7 +72,17 @@ export default defineConfig({
         target: 'http://139.196.7.72:8765/api/yibum',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/yibum/, '')
-      }
+      },
+      '/api/workorder': {
+        target: 'http://58.215.206.250:8765/api/workorder',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/workorder/, '')
+      },
+      '/api/oa': {
+        target: 'http://58.215.206.250:8765/api/oa',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/oa/, '')
+      },
     }
   },
   resolve: {
