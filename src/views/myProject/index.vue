@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
-import request from '@/utils/request';
 import {removeEmptyProps} from '@/utils/common';
+import api from '@/request/api'
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
@@ -29,7 +29,6 @@ let refreshing = $ref(false);
 
 const onLoad = () => {
   console.log('onLoad...')
-  queryParams.page++;
   getData();
 }
 
@@ -102,15 +101,13 @@ const onSubmit = (values) => {
 };
 
 onMounted(() => {
-  getBrandOptions();
-  getRegionOptions();
 });
 
 // 请求接口获取数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/myStyleList', params);
+  const { code, rows } = await api.workorderPatternList(params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -122,36 +119,7 @@ const getData = async () => {
   }
   loading = false;
   refreshing = false;
-};
-
-// 获取品牌选项数据
-const getBrandOptions = async () => {
-  const {code, rows} = await request.get('/api/sys/getClientLink');
-  if (code == 200) {
-    // 处理品牌选项数据
-    // 处理完成后赋值给brandOptions
-    // 赋值后，页面会自动更新
-    brandOptions = rows;
-    showTopIcon = true;
-  } else {
-    // 获取品牌选项数据失败提示
-    showToast("获取品牌选项数据失败");
-  }
-};
-
-// 获取片区选项数据
-const getRegionOptions = async () => {
-  const {code, rows} = await request.get('/api/sys/getRegion');
-  if (code == 200) {
-    // 处理片区选项数据
-    // 处理完成后赋值给regionOptions
-    // 赋值后，页面会自动更新
-    regionOptions = rows;
-    showTopIcon = true;
-  } else {
-    // 获取片区选项数据失败提示
-    showToast("获取片区选项数据失败");
-  }
+  finished = true;
 };
 
 // 搜索重置
@@ -174,7 +142,7 @@ const reset = () => {
 </script>
 
 <template>
-  <van-nav-bar title="订单列表" fixed :border="false">
+  <van-nav-bar title="我的项目查询" fixed :border="false">
     <template #right>
       <van-icon v-if="showTopIcon" name="bars" size="24" @click="showTop = true" />
     </template>
