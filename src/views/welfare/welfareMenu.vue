@@ -11,6 +11,6 @@
 
 <style scoped>
   .container {
-    padding: 0 30px;
+    padding: 0 15px;
   }
 </style>
