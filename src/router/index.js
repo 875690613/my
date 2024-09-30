@@ -59,20 +59,12 @@ const router = createRouter({
     {
       path: '/myProject',
       name:'myProject',
-      component: () => import('../views/myProject/main.vue'),
-      redirect: '/myProject/index',
-      children: [
-        {
-          path: '/myProject/index',
-          name:'myProjectIndex',
-          component: () => import('../views/myProject/index.vue')
-        },
-        {
-          path: '/myProject/login',
-          name:'myProjectLogin',
-          component: () => import('../views/myProject/login.vue')
-        },
-      ]
+      component: () => import('../views/myProject/index.vue')
+    },
+    {
+      path: '/myProjectLogin',
+      name:'myProjectLogin',
+      component: () => import('../views/myProject/login.vue')
     },
   ]
 })
