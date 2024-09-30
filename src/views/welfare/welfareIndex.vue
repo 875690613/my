@@ -12,7 +12,7 @@ import { RouterView } from 'vue-router'
 
 <style scoped>
 .welfare-index {
-    background-color: #073936;
+    /* background-color: #073936; */
     height: 100vh;
 }
 </style>
