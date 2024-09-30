@@ -1,10 +1,10 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import request from '@/utils/request';
 import { showToast } from 'vant';
 import { onMounted } from 'vue';
-let phone = $ref('');
-let pwd = $ref('');
+import api from '@/request/api'
+let username = $ref('13771202326');
+let password = $ref('zr123456');
 let toast = $ref(null)
 
 const router = useRouter();
@@ -14,19 +14,19 @@ const onSubmit = async (values) => {
     forbidClick: true,
   });
   console.log('submit', values);
-  const { code, rows, msg } = await request.get('/api/sys/loginIn', values);
+  const { status, data, msg } = await api.workorderLogin(values);
   toast.close();
-  if (code == 200) {
+  if (status == 200) {
     // Toast登录成功提示
     showToast({
-      message: msg,
+      message: '登录成功',
       className: 'custom-toast',
     })
     
     // 缓存token
-    sessionStorage.setItem('userId', rows);
+    sessionStorage.setItem('token', data);
     // 路由跳转->订单列表
-    router.push('/orderList');
+    router.push('/myProject');
 
     
   } else {
@@ -45,21 +45,21 @@ onMounted(() => {
 <template>
   <van-nav-bar title="登录" fixed :border="false" />
   <main>
-    <div class="login-title">我的订单查询工具</div>
+    <div class="login-title">我的项目查询</div>
     <van-form @submit="onSubmit">
         <van-cell-group inset>
             <van-field
-            v-model="phone"
-            name="phone"
-            label="手机号码"
-            placeholder="手机号码"
+            v-model="username"
+            name="username"
+            label="用户名"
+            placeholder="用户名"
             clearable
-            :rules="[{ required: true, message: '请填写手机号码' }]"
+            :rules="[{ required: true, message: '请填写用户名' }]"
             />
             <van-field
-            v-model="pwd"
+            v-model="password"
             type="password"
-            name="pwd"
+            name="password"
             label="密码"
             placeholder="密码"
             clearable

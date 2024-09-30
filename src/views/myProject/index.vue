@@ -9,6 +9,8 @@ import api from '@/request/api'
 
 const router = useRouter();
 
+document.title = '我的项目查询'
+
 let listData = $ref([]);
 let showBrand = $ref(false);
 let showRegion = $ref(false);
@@ -29,6 +31,7 @@ let refreshing = $ref(false);
 
 const onLoad = () => {
   console.log('onLoad...')
+  queryParams.page++;
   getData();
 }
 
@@ -44,7 +47,7 @@ let regionName = $ref('');
 let showTopIcon = $ref(false);
 
 const queryParams = reactive({
-  page: 1,
+  page: 0,
   limit: 10,
   BrandId: null,
   regionId: null,
@@ -70,7 +73,8 @@ const onConfirmRegion = (item) => {
   showRegion = false;
 };
 const goOrderDetail = (item) => {
-  router.push({ name: "orderDetail", query: { id: item.Id, regionId: item.RegionId, colorId: item.ColorId } });
+  localStorage.setItem('projectDetail', JSON.stringify(item));
+  router.push({ name: "myProjectDetail" });
 };
 
 let showTop = $ref(false);
@@ -107,12 +111,16 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows } = await api.workorderPatternList(params);
-  if (code == 200) {
+  const { code, data } = await api.workorderPatternList(params, {
+    headers: {
+      authorization: sessionStorage.getItem('token')
+    }
+  });
+  if (code == 0) {
     // 计算finished
-    finished = rows.length < queryParams.limit;
+    finished = data.newPatterns.length < queryParams.limit;
     // 合并数据
-    listData = listData.concat(rows);
+    listData = listData.concat(data.newPatterns);
   } else {
     // 获取数据失败提示
     showToast("获取数据失败");
@@ -151,41 +159,34 @@ const reset = () => {
     <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
   <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-row class="order-list-item" v-for="(item, index) in listData" :key="item.Id" @click="goOrderDetail(item)">
+      <van-cell-group class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)" inset>
+      <van-row>
         <van-col span="24">
-          序号：{{ index + 1 }}
-        </van-col>
-        <van-col span="24">
-          款号：{{ item.StyleNo }}
+          项目编号：{{ item.code }}
         </van-col>
         <van-col span="12">
-          订单类型：{{ item.StyleType }}
+          品牌：{{ item.brand }}
         </van-col>
         <van-col span="12">
-          品牌：{{ item.Brand }}
+          安排日期：{{ item.scheduleTime }}
         </van-col>
         <van-col span="12">
-          离厂日期：{{ item.OrderDeliveryDate }}
+          订单类型：{{ item.category }}
         </van-col>
         <van-col span="12">
-          业务组：{{ item.BusinessGroup }}
-        </van-col>
-        <van-col span="12">
-          颜色：{{ item.Color }}
-        </van-col>
-        <van-col span="12">
-          数量：{{ item.Qty }}
+          阶段：{{ item.stage }}
         </van-col>
         <van-col span="24">
-          尺码：{{ item.Size }}
+          订单款号：{{ item.styleNo }}
         </van-col>
         <van-col span="12">
-          生产片区：{{ item.Region }}
+          指派员工：{{ item.appointStaff }}
         </van-col>
         <van-col span="12">
-          工厂/车间：{{ item.Factory }}
+          状态：{{ item.status == 1 ? '进行中' : '已完成' }}
         </van-col>
       </van-row>
+      </van-cell-group>
     </van-list>
   </van-pull-refresh>
   </main>
@@ -273,13 +274,13 @@ const reset = () => {
 
 <style scoped>
 .order-list {
-  padding: 0 20px;
 }
 .order-list-item {
-  margin-bottom: 5px;
+  margin-top: 15px;
   padding: 10px 0;
   border-bottom: 1px solid #eee;
   font-size: 12px;
+  padding: 15px;
 }
 .btn-group {
   display: flex;

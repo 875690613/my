@@ -74,14 +74,15 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/yibum/, '')
       },
       '/api/workorder': {
-        target: 'http://58.215.206.250:8765/api/workorder',
+        target: 'https://welfare.zhuritec.com/api/workorder',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/workorder/, '')
       },
-      '/api/oa': {
-        target: 'http://58.215.206.250:8765/api/oa',
+      '/api/auth': {
+        // target: 'http://58.215.206.250:8765/api/auth',
+        target: 'http://58.215.206.250:7776/api/auth',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/oa/, '')
+        rewrite: (path) => path.replace(/^\/api\/auth/, '')
       },
     }
   },
