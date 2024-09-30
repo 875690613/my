@@ -3,9 +3,9 @@
   </van-nav-bar>
   <main class="scrollMain">
     <van-empty description="暂无数据" v-show="pageData.listData.length === 0"></van-empty>
-    <van-pull-refresh>
+    
       <van-list class="order-list">
-        <van-row class="order-list-item" v-for="(item, index) in pageData.listData" :key="item.Id" @click="goOrderDetail(item)">
+        <van-row class="order-list-item" v-for="(item, index) in pageData.listData" :key="item.Id">
           <van-col span="24">
             店铺名称：{{ item.branchName }}
           </van-col>
@@ -32,7 +32,7 @@
           </van-col>
         </van-row>
       </van-list>
-    </van-pull-refresh>
+
   </main>
   <!-- <van-popup v-model:show="showTop" position="top" :style="{ height: '45%' }">
     <van-form v-if="showTopIcon" @submit="onSubmit">
