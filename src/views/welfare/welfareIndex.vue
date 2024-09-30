@@ -11,8 +11,14 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style scoped>
+:deep(.van-nav-bar) {
+  background: transparent!important;
+}
+:deep(.van-cell) {
+  background: transparent!important;
+}
 .welfare-index {
-    /* background-color: #073936; */
+    background-color: #073936;
     height: 100vh;
 }
 </style>

@@ -36,11 +36,6 @@
   --section-gap: 160px;
 }
 
-:root {
-  /* --van-background-2: #073936!important; */
-  /* --van-primary-color: white!important; */
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);

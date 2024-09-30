@@ -273,6 +273,9 @@ const reset = () => {
 </template>
 
 <style scoped>
+.scrollMain {
+  background-color: #f5f5f5;
+}
 .order-list {
 }
 .order-list-item {
