@@ -57,7 +57,7 @@ const router = createRouter({
       ]
     },
     {
-      path: 'myProject',
+      path: '/myProject',
       name:'myProject',
       component: () => import('../views/myProject/index.vue')
     }
