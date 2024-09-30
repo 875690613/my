@@ -67,6 +67,11 @@ export default defineConfig({
         target: 'http://196.192.169.242:8190/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/erpapi/, '')
+      },
+      '/api/yibum': {
+        target: 'http://139.196.7.72:8765/api/yibum',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/yibum/, '')
       }
     }
   },
