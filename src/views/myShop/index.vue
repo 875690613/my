@@ -7,7 +7,7 @@
       <van-list class="order-list">
         <van-row class="order-list-item" v-for="(item, index) in pageData.listData" :key="item.Id" @click="goOrderDetail(item)">
           <van-col span="24">
-            店铺名称：{{ item.shopName }}
+            店铺名称：{{ item.branchName }}
           </van-col>
           <van-col span="24">
             店铺电话：{{ item.phone }}
@@ -86,7 +86,7 @@ const pageData = reactive({
   params: {
     time: 'vqmsmmdtog00',
     page: 1,
-    limit: 10,
+    limit: 20,
   },
   info: [],
   listData: [],
@@ -117,11 +117,13 @@ const onClickLeft = () => {
 }
 
 .order-list-item {
+  margin-top: 10px;
   margin-bottom: 5px;
-  padding: 10px 0;
+  padding: 10px 0 10px 10px;
   border-bottom: 1px solid #eee;
   font-size: 12px;
-  color: #fff;
+  background: #e8f1f3;
+  border-radius: 16px;
 }
 
 .btn-group {
