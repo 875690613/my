@@ -3,8 +3,10 @@ import { useRouter } from 'vue-router';
 import { showToast } from 'vant';
 import { onMounted } from 'vue';
 import api from '@/request/api'
-let username = $ref('13771202326');
-let password = $ref('zr123456');
+// let username = $ref('13771202326');
+// let password = $ref('zr123456');
+let username = $ref('');
+let password = $ref('');
 let toast = $ref(null)
 
 const router = useRouter();
