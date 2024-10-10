@@ -58,15 +58,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/oaapi': {
-        target: 'https://z-office.zhuritec.com/',
+      '/api/machine': {
+        target: 'https://z-office.zhuritec.com/api/machine',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/oaapi/, '')
+        rewrite: (path) => path.replace(/^\/api\/machine/, '')
       },
-      '/erpapi': {
-        target: 'http://196.192.169.242:8190/',
+      '/api/verCode': {
+        target: 'https://z-office.zhuritec.com/api/verCode',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/erpapi/, '')
+        rewrite: (path) => path.replace(/^\/api\/verCode/, '')
       },
       '/api/yibum': {
         target: 'http://139.196.7.72:8765/api/yibum',

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onUnmounted, watch, onMounted } from 'vue';
+import { ref, computed, onUnmounted, watch, onMounted, watchEffect } from 'vue';
 import request from '@/utils/request'
 import { Html5Qrcode } from 'html5-qrcode';
 import { showToast } from 'vant';
@@ -11,8 +11,12 @@ const loginParams = ref({});
 const salaryList = ref([]);
 const salaryDetail = ref({})
 const salaryDetailTitle = computed(() => {
-  return `${salaryDetail.sYear || 2024}年${salaryDetail.sMonth || 9}月 工资明细`
+  return `${salaryDetail.value.syear}年${salaryDetail.value.smonth}月 工资明细`
 })
+
+// watchEffect(() => {
+//   salaryDetailTitle = `${salaryDetail.syear}年${salaryDetail.smonth}月 工资明细`
+// })
 
 let html5QrCode = $ref(null);
 const authCode = ref(); // 230037, 240015, 240013
@@ -32,7 +36,7 @@ const headerTitle = computed(() => {
 const showDatePicker = ref(false);
 const currentDate = ref(['2024']);
 const minDate = new Date(2012, 0, 1);
-const maxDate = new Date(2024, 9, 1);
+const maxDate = new Date();
 const columnsType = ['year'];
 const onSubmit = (values) => {
   salaryLogin();
@@ -166,7 +170,7 @@ const getCameras = () => {
         // 根据员工码获取个人信息
         const getStaffInfo = () => {
           return new Promise((resolve, reject) => {
-            request.get('api/machine/user', {})
+            request.get('/api/machine/user', {})
               .then((res) => {
                 console.log('getStaffInfo res:', res)
                 const { code, data, message } = res;
@@ -185,7 +189,7 @@ const getCameras = () => {
         // 发送手机验证码
         const sendCode = async () => {
           isSend.value = true;
-          request.post('api/verCode/add', {
+          request.post('/api/verCode/add', {
             phone: loginParams.value.phone
           })
               .then((res) => {
@@ -202,7 +206,7 @@ const getCameras = () => {
 
           // 工资查询-人员认证
           const salaryLogin = () => {
-            request.get('api/machine/user/salary/login', {
+            request.get('/api/machine/user/salary/login', {
               ...loginParams.value}).then((res) => {
                 const { code, message } = res;
                 if (code == 0) {
@@ -231,7 +235,7 @@ const getCameras = () => {
 
           // 查询工资
           const getSalaryList = (params) => {
-            request.get('api/machine/user/salary/byUserStaffNo', params).then((res) => {
+            request.get('/api/machine/user/salary/byUserStaffNo', params).then((res) => {
                   const { code, message, data } = res;
                   if (code == 0) {
                     if (data?.data?.length > 0) {
@@ -246,7 +250,7 @@ const getCameras = () => {
 
           // 查询工资明细
           const getSalaryDetail = (id) => {
-            request.get(`api/machine/user/salary/byId/${id}`, {
+            request.get(`/api/machine/user/salary/byId/${id}`, {
                   staffNo: authCode.value,
                 }).then((res) => {
                   const { code, message, data } = res;
@@ -353,9 +357,9 @@ const getCameras = () => {
         </van-cell-group>
         <div>
           <van-cell-group title="基本信息">
-            <van-cell title="姓名" :value="salaryDetail.accountName" />
+            <van-cell title="姓名" :value="salaryDetail.staff" />
             <van-cell title="部门名称" :value="salaryDetail.deptName" />
-            <van-cell title="岗位/职务" :value="salaryDetail.staff" />
+            <van-cell title="岗位/职务" :value="salaryDetail.jobName" />
             <van-cell title="身份证号" :value="salaryDetail.idNumber" />
             <van-cell title="工号" :value="salaryDetail.employeeNumber" />
           </van-cell-group>
@@ -443,7 +447,7 @@ header.header {
 
 :deep(.van-cell-group),
 :deep(.van-cell) {
-  background: white;
+  background: white!important;
 }
 :deep(.van-field__label) {
   color: #333;

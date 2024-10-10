@@ -1,7 +1,4 @@
 import axios from 'axios'
-/**  /oaapi/ */
-// axios.defaults.baseURL = '/oaapi/'
-axios.defaults.baseURL = ''
 
 axios.defaults.timeout = 40000;
 
