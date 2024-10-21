@@ -94,7 +94,7 @@ const onClickLeft = () => {
 }
 .login-title {
   font-size: 22px;
-  color: #666666;
+  color: white;
   text-align: center;
   padding: 120px 20px 50px 20px;
 
