@@ -9,7 +9,7 @@ import api from './api'
 
 const router = useRouter();
 
-document.title = '品牌列表'
+document.title = '授权店铺'
 
 let listData = $ref([]);
 
@@ -47,7 +47,7 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { status, data } = await api.getBrandList(params);
+  const { status, data } = await api.getBrandAuth(params);
   if (status == 200) {
     // 计算finished
     finished = data.rows.length < queryParams.limit;
@@ -66,7 +66,7 @@ const getData = async () => {
 </script>
 
 <template>
-  <van-nav-bar title="品牌列表" fixed :border="false">
+  <van-nav-bar title="授权店铺" fixed :border="false">
   </van-nav-bar>
   <main class="scrollMain">
     <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import brandAuth from './brandAuth';
+import channelNetwork from './channelNetwork';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -104,29 +106,9 @@ const router = createRouter({
         }
       ]
     },
-    
-    {
-      path: '/brandAuth',
-      name: 'brandAuth',
-      redirect: '/brandAuth/brandAuthIndex',
-      children: [
-        {
-          path: 'brandAuthIndex',
-          name:'brandAuthIndex',
-          component: () => import('../views/brandAuth/index.vue')
-        },
-        {
-          path: 'brandAuthDetail',
-          name:'brandAuthDetail',
-          component: () => import('../views/brandAuth/detail.vue')
-        },
-        {
-          path: 'brandAuthLogin',
-          name:'brandAuthLogin',
-          component: () => import('../views/brandAuth/login.vue')
-        }
-       ]
-    }
+
+    ...brandAuth,
+    ...channelNetwork
   ]
 })
 
