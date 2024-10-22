@@ -66,20 +66,6 @@ export default {
                 id: route.query.id || ''
             },
             listData: [],
-            stateWord: {
-                0: '未营业',
-                1: '营业中',
-            },
-            showCenter: false,
-            showPicker: false,
-            columns: [
-                { text: '杭州', value: 'Hangzhou' },
-                { text: '宁波', value: 'Ningbo' },
-                { text: '温州', value: 'Wenzhou' },
-                { text: '绍兴', value: 'Shaoxing' },
-                { text: '湖州', value: 'Huzhou' },
-            ],
-            result: '',
         });
 
         const go = str => {
@@ -87,32 +73,22 @@ export default {
         }
 
         // 请求接口获取数据
-        const getData = async () => {
-            const { status, data } = await api.shopList(pageData.params);
-            if (status == 200) {
-                pageData.listData = data.rows;
+        const getList = async () => {
+            const { code, rows } = await api.myStyleList({ id: route.query.id });
+            if (code == 200) {
+                pageData.listData = rows;
 
             } else {
-                // 获取数据失败提示
                 showToast("获取数据失败");
             }
         };
-        getData();
+        if (route.query.id) {
+            getList();
+        }
 
-        const onConfirm = ({ selectedValues }) => {
-            pageData.showPicker = false;
-            
-        };
-        const onChange = ({ selectedValues }) => {
-            pageData.showPicker = false;
-        };
-        const onCancel = () => showToast('取消');
         return {
             ...toRefs(pageData),
             go,
-            onConfirm,
-            onChange,
-            onCancel,
         }
     }
 }
