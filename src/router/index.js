@@ -76,6 +76,35 @@ const router = createRouter({
       name:'myProjectDetail',
       component: () => import('../views/myProject/detail.vue')
     },
+    ,
+    {
+      path: '/series',
+      name: 'series',
+      component: () => import('../views/series/seIndex.vue'),
+      redirect: '/series/login',
+      children: [
+        {
+          path: 'login',
+          name:'login',
+          component: () => import('../views/series/login.vue')
+        },
+        {
+          path: 'list',
+          name:'list',
+          component: () => import('../views/series/seList.vue')
+        },
+        {
+          path: 'seDetail',
+          name:'seDetail',
+          component: () => import('../views/series/seDetail.vue')
+        },
+        {
+          path: 'styleOrder',
+          name:'styleOrder',
+          component: () => import('../views/series/styleOrder.vue')
+        }
+      ]
+    },
   ]
 })
 

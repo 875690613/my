@@ -84,6 +84,16 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/auth/, '')
       },
+      '/api/myStyle': {
+        target: 'http://58.215.206.250:8190/api/myStyle',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/myStyle/, '')
+      },
+      '/api/sys': {
+        target: 'http://58.215.206.250:8190/api/sys',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/sys/, '')
+      },
     }
   },
   resolve: {
