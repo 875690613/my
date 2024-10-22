@@ -28,7 +28,7 @@ const onSubmit = async (values) => {
     // 缓存token
     sessionStorage.setItem('token', data);
     // 路由跳转->订单列表
-    router.push('/welfare/myShop');
+    router.push('/brandAuth');
 
     
   } else {
@@ -43,16 +43,12 @@ onMounted(() => {
   sessionStorage.clear();
 })
 
-// 导航-返回
-const onClickLeft = () => {
-  router.push('/welfare/welfareMenu');
-}
 </script>
 
 <template>
-  <van-nav-bar title="登录" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft" />
+  <van-nav-bar title="登录" fixed :border="false" left-arrow left-text="返回" />
   <main>
-    <div class="login-title">我的店铺</div>
+    <div class="login-title">品牌授权</div>
     <van-form @submit="onSubmit">
         <van-cell-group inset>
             <van-field
@@ -94,7 +90,7 @@ const onClickLeft = () => {
 }
 .login-title {
   font-size: 22px;
-  color: white;
+  color: #666666;
   text-align: center;
   padding: 120px 20px 50px 20px;
 
