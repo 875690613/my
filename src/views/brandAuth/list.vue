@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import {removeEmptyProps} from '@/utils/common';
 import api from './api'
 
@@ -8,6 +8,7 @@ import api from './api'
 // const vConsole = new VConsole();
 
 const router = useRouter();
+const route = useRoute();
 
 document.title = '品牌授权'
 
@@ -20,6 +21,7 @@ let refreshing = $ref(false);
 const onLoad = () => {
   console.log('onLoad...')
   queryParams.page++;
+  
   getData();
 }
 
@@ -35,12 +37,13 @@ const queryParams = reactive({
   limit: 10
 });
 
-const goOrderDetail = (item) => {
-  localStorage.setItem('projectDetail', JSON.stringify(item));
-  router.push({ name: "myProjectDetail" });
+const goList = (item) => {
+  localStorage.setItem('shopBranchList', JSON.stringify(item.shopBranchList));
+  router.push({ name: "brandAuthList2" });
 };
 
 onMounted(() => {
+  queryParams.brandName = route.query.brandName;
 });
 
 // 请求接口获取数据
@@ -62,41 +65,35 @@ const getData = async () => {
   finished = true;
 };
 
+const onClickLeft = () => {
+    router.push('/brandAuth/brandAuthIndex');
+}
 
 </script>
 
 <template>
-  <van-nav-bar title="品牌授权" fixed :border="false">
+  <van-nav-bar title="品牌授权" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
   </van-nav-bar>
   <main class="scrollMain">
     <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
   <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-cell-group class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)" inset>
+      <van-cell-group class="order-list-item" v-for="item in listData" :key="item.Id" @click="goList(item)" inset>
       <van-row>
         <van-col span="24">
-          项目编号：{{ item.code }}
-        </van-col>
-        <van-col span="12">
-          品牌：{{ item.brand }}
-        </van-col>
-        <van-col span="12">
-          安排日期：{{ item.scheduleTime }}
-        </van-col>
-        <van-col span="12">
-          订单类型：{{ item.category }}
-        </van-col>
-        <van-col span="12">
-          阶段：{{ item.stage }}
+          品牌名称：{{ item.brand.brandName }}
         </van-col>
         <van-col span="24">
-          订单款号：{{ item.styleNo }}
+          创立时间：{{ item.brand.brandEstablishTime }}
         </van-col>
-        <van-col span="12">
-          指派员工：{{ item.appointStaff }}
+        <van-col span="24">
+          所属公司：{{ item.brand.companyName }}
         </van-col>
-        <van-col span="12">
-          状态：{{ item.status == 1 ? '进行中' : '已完成' }}
+        <van-col span="24">
+          授权日期：
+        </van-col>
+        <van-col span="24">
+          授权周期：
         </van-col>
       </van-row>
       </van-cell-group>
