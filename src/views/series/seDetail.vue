@@ -25,7 +25,7 @@
             </van-list>
             <van-divider />
             <div class="badge-list">
-                <div class="badge-it">
+                <div class="badge-it" @click="go({ path: '', query: {} })">
                     <div class="badge">
                         <van-icon name="column" size="38" />
                     </div>

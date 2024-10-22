@@ -9,4 +9,5 @@ export default {
     clientList: (params) => request.get('/api/sys/getClient', { ...params }),
     queryBrand: (params) => request.get('/api/sys/getClientLinkByClient', { ...params }),
     brandConllectionDetail: (params) => request.get('/api/myStyle/brandConllectionDetail', { ...params }),
+    myStyleList: (params) => request.get('/api/myStyle/myStyleList', { ...params }),
 }
