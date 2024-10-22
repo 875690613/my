@@ -18,11 +18,6 @@ export default [
             path: 'brandAuthList2',
             name:'brandAuthList2',
             component: () => import('../views/brandAuth/list2.vue')
-          },
-          {
-            path: 'brandAuthLogin',
-            name:'brandAuthLogin',
-            component: () => import('../views/brandAuth/login.vue')
           }
          ]
       }
