@@ -1,5 +1,5 @@
 <template>
-    <van-nav-bar title="系列生产信息" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
+    <van-nav-bar title="系列配款信息" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
     </van-nav-bar>
     <div class="se-main">
         <main class="scrollMain">
@@ -12,19 +12,25 @@
                         序号：{{ (index + 1) }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        生产合同编号：{{ item.contractNo }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        片区名称：{{ item.regionName }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        片区负责人：{{ item.regionStaff }}
+                        配款袋编号：{{ item.contractNo }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        工厂名称：{{ item.factory }}
+                        订单编号：{{ item.regionName }}
+                    </van-col>
+                    <van-col span="12" class="or-col">
+                        订单类型：{{ item.regionStaff }}
+                    </van-col>
+                    <van-col span="12" class="or-col">
+                        指令类型：{{ item.factory }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        创建日期：{{ item.createrDate }}
+                        配款状态：{{ item.createrDate }}
+                    </van-col>
+                    <van-col span="24" class="or-col">
+                        配款开始日期：{{ item.createrDate }}
+                    </van-col>
+                    <van-col span="24" class="or-col">
+                        配款结束日期：{{ item.createrDate }}
                     </van-col>
 
                 </van-row>
@@ -59,35 +65,8 @@ export default {
 
         // 请求接口获取数据
         const getList = async () => {
-            const { code, rows } = await api.conllectionProductList(pageData.params);
+            const { code, rows } = await api.conllectionAllocationList(pageData.params);
             if (code == 200) {
-
-                // let rows2 = [
-                //     {
-                //         "contractId": 204713,
-                //         "contractNo": "324090022",
-                //         "regionName": "靖江西区（孙）",
-                //         "regionStaff": "孙国平",
-                //         "factory": "靖江市森奕服装有限公司",
-                //         "createrDate": "2024-09-19"
-                //     },
-                //     {
-                //         "contractId": 204725,
-                //         "contractNo": "324090025",
-                //         "regionName": "靖江东区（周）",
-                //         "regionStaff": "周继红",
-                //         "factory": "靖江市锦欣服装加工厂",
-                //         "createrDate": "2024-09-19"
-                //     },
-                //     {
-                //         "contractId": 204573,
-                //         "contractNo": "324090018",
-                //         "regionName": "泰兴一区（孙）",
-                //         "regionStaff": "孙国平",
-                //         "factory": "泰兴市缘吉服饰有限公司",
-                //         "createrDate": "2024-09-13"
-                //     }
-                // ]
                 pageData.listData = rows;
 
             } else {

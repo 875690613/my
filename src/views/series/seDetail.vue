@@ -45,7 +45,7 @@
                     </div>
                     <p>系列生产信息</p>
                 </div>
-                <div class="badge-it">
+                <div class="badge-it" @click="go({ path: 'seStyleList', query: {id: listData.id} })">
                     <div class="badge">
                         <van-icon name="bag" size="38" />
                     </div>

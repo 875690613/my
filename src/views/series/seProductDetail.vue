@@ -1,5 +1,5 @@
 <template>
-    <van-nav-bar title="采购合同详情" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
+    <van-nav-bar title="生产合同详情" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
     </van-nav-bar>
     <div class="se-main">
         <main class="scrollMain">
@@ -11,48 +11,42 @@
                         生产合同编号：{{ listData.contractNo }}
                     </van-col>
                     <van-col span="12" class="or-col">
-                        合同类型：{{ listData.contractType }}
+                        片区名称：{{ listData.regionName }}
                     </van-col>
                     <van-col span="12" class="or-col">
-                        供应商：{{ listData.supplier }}
+                        片区负责人：{{ listData.regionStaff }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        采购公司：{{ listData.company }}
+                        工厂名称：{{ listData.factory }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        采购日期：{{ listData.purchaseDate }}
+                        创建日期：{{ listData.createrDate }}
                     </van-col>
                 </van-row>
 
             </van-list>
             <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">
-                采购物料明细
+                款式详情
             </van-divider>
             <van-list class="order-list">
                 <van-row class="order-list-item" v-for="(item, index) in stoData" :key="index">
                     <van-col span="24" class="or-col">
                         序号：{{ (index + 1) }}
                     </van-col>
-                    <van-col span="12" class="or-col">
-                        物料编号：{{ item.StockNo }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        物料品名：{{ item.StockName }}
-                    </van-col>
-                    <van-col span="24" class="or-col">
-                        物料颜色：{{ item.Color }}
-                    </van-col>
-                    <van-col span="24" class="or-col">
-                        规格型号：{{ item.Specification }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        采购数量：{{ item.Qty }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        单位：{{ item.Unit }}
-                    </van-col>
                     <van-col span="24" class="or-col">
                         订单款号：{{ item.StyleNo }}
+                    </van-col>
+                    <van-col span="12" class="or-col">
+                        订单类型：{{ item.StyleType }}
+                    </van-col>
+                    <van-col span="12" class="or-col">
+                        服装品名：{{ item.ClothName }}
+                    </van-col>
+                    <van-col span="24" class="or-col">
+                        生产数量：{{ item.Qty }}
+                    </van-col>
+                    <van-col span="12" class="or-col">
+                        交货日期：{{ item.OrderDeliveryDate }}
                     </van-col>
                 </van-row>
 
@@ -87,7 +81,7 @@ export default {
 
         // 请求接口获取数据
         const getDetData = async () => {
-            const { code, rows } = await api.conllectionPurchaseDetail({ contractId: route.query.contractId });
+            const { code, rows } = await api.conllectionProductDetail({ contractId: route.query.contractId });
             if (code == 200) {
                 pageData.listData = rows;
             } else {
@@ -101,7 +95,7 @@ export default {
         }
 
         const getStockData = async () => {
-            const { code, rows } = await api.purchaseStockList(pageData.stoParms);
+            const { code, rows } = await api.productStyleList(pageData.stoParms);
             if (code == 200) {
                 pageData.stoData = rows;
             } else {

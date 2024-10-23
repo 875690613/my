@@ -163,6 +163,11 @@ const router = createRouter({
           name:'seProductDetail',
           component: () => import('../views/series/seProductDetail.vue')
         },
+        {
+          path: 'seStyleList',
+          name:'seStyleList',
+          component: () => import('../views/series/seStyleList.vue')
+        },
       ]
     },
     ...extendRoutes
