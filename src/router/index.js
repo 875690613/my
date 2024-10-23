@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import brandAuth from './brandAuth';
-import channelNetwork from './channelNetwork';
+
+const modules = import.meta.glob('./model/*.js', {eager: true})
+
+const extendRoutes = Object.keys(modules).map((path) => {
+  return modules[path].default
+})
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -106,9 +110,7 @@ const router = createRouter({
         }
       ]
     },
-
-    ...brandAuth,
-    ...channelNetwork
+    ...extendRoutes
   ]
 })
 

@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, getCurrentInstance } from "vue";
 import { useRouter } from "vue-router";
 import {removeEmptyProps} from '@/utils/common';
-import api from './api'
+const {proxy } = getCurrentInstance();
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
@@ -51,7 +51,7 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { status, data } = await api.getChannelList(params);
+  const { status, data } = await proxy.$API.chanelNetwork.getChannelList(params);
   if (status == 200) {
     // 计算finished
     finished = data.rows.length < queryParams.limit;
@@ -86,9 +86,6 @@ const getData = async () => {
         </van-col>
         <van-col span="24">
           是否已授权：{{ grantAuths[item.grantAuth] }}
-        </van-col>
-        <van-col span="24">
-          当前状态：{{ grantAuths[item.grantAuth] }}
         </van-col>
       </van-row>
       </van-cell-group>
