@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="badge-list">
-                <div class="badge-it">
+                <div class="badge-it" @click="go({ path: 'seProductList', query: {id: listData.id} })">
                     <div class="badge">
                         <van-icon name="setting" size="38" />
                     </div>

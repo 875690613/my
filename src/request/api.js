@@ -13,4 +13,5 @@ export default {
     conllectionPurchaseList: (params) => request.post('/api/myStyle/conllectionPurchaseList', { ...params }),
     conllectionPurchaseDetail: (params) => request.get('/api/myStyle/conllectionPurchaseDetail', { ...params }),
     purchaseStockList: (params) => request.post('/api/myStyle/purchaseStockList', { ...params }),
+    conllectionProductList: (params) => request.post('/api/myStyle/conllectionProductList', { ...params }),
 }

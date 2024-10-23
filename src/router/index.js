@@ -149,6 +149,16 @@ const router = createRouter({
           name:'purchaseDetail',
           component: () => import('../views/series/purchaseDetail.vue')
         },
+        {
+          path: 'seProductList',
+          name:'seProductList',
+          component: () => import('../views/series/seProductList.vue')
+        },
+        {
+          path: 'seProductDetail',
+          name:'seProductDetail',
+          component: () => import('../views/series/seProductDetail.vue')
+        },
       ]
     },
 
