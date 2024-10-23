@@ -16,6 +16,10 @@ let listData = $ref([]);
 let loading = $ref(false);
 let finished = $ref(false);
 let refreshing = $ref(false);
+let grantAuths = [
+  '不授权',
+  '授权'
+]
 
 const onLoad = () => {
   console.log('onLoad...')
@@ -75,28 +79,16 @@ const getData = async () => {
       <van-cell-group class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)" inset>
       <van-row>
         <van-col span="24">
-          项目编号：{{ item.code }}
-        </van-col>
-        <van-col span="12">
-          品牌：{{ item.brand }}
-        </van-col>
-        <van-col span="12">
-          安排日期：{{ item.scheduleTime }}
-        </van-col>
-        <van-col span="12">
-          订单类型：{{ item.category }}
-        </van-col>
-        <van-col span="12">
-          阶段：{{ item.stage }}
+          渠道名称：{{ item.channelName }}
         </van-col>
         <van-col span="24">
-          订单款号：{{ item.styleNo }}
+          渠道类型：{{ item.channelType }}
         </van-col>
-        <van-col span="12">
-          指派员工：{{ item.appointStaff }}
+        <van-col span="24">
+          是否已授权：{{ grantAuths[item.grantAuth] }}
         </van-col>
-        <van-col span="12">
-          状态：{{ item.status == 1 ? '进行中' : '已完成' }}
+        <van-col span="24">
+          当前状态：{{ grantAuths[item.grantAuth] }}
         </van-col>
       </van-row>
       </van-cell-group>
