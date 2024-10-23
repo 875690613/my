@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, getCurrentInstance } from "vue";
 import { useRouter } from "vue-router";
 import {removeEmptyProps} from '@/utils/common';
-import api from './api'
+
+const {proxy } = getCurrentInstance();
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
@@ -36,7 +37,7 @@ const queryParams = reactive({
 });
 
 const goList = (item) => {
-  router.push({ path: "brandAuthList", query: { brandName: item.brandName} });
+  router.push({ path: "brandAuthList", query: { brandId: item.id} });
 };
 
 onMounted(() => {
@@ -46,7 +47,7 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { status, data } = await api.getBrandList(params);
+  const { status, data } = await proxy.$API.brandAuth.getBrandList(params);
   if (status == 200) {
     // 计算finished
     finished = data.rows.length < queryParams.limit;

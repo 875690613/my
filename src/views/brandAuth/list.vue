@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, getCurrentInstance } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {removeEmptyProps} from '@/utils/common';
-import api from './api'
+const {proxy } = getCurrentInstance();
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
@@ -19,7 +19,6 @@ let finished = $ref(false);
 let refreshing = $ref(false);
 
 const onLoad = () => {
-  console.log('onLoad...')
   queryParams.page++;
   
   getData();
@@ -43,19 +42,21 @@ const goList = (item) => {
 };
 
 onMounted(() => {
-  queryParams.brandName = route.query.brandName;
+  queryParams.brandId = route.query.brandId;
 });
 
 // 请求接口获取数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { status, data } = await api.getBrandAuth(params);
+  const { status, data } = await proxy.$API.brandAuth.getBrandAuth(params);
   if (status == 200) {
-    // 计算finished
-    finished = data.rows.length < queryParams.limit;
-    // 合并数据
-    listData = listData.concat(data.rows);
+    if (data?.rows) {
+      // 计算finished
+      finished = data?.rows?.length < queryParams.limit;
+      // 合并数据
+      listData = listData.concat(data.rows);
+    }
   } else {
     // 获取数据失败提示
     showToast("获取数据失败");
@@ -78,7 +79,7 @@ const onClickLeft = () => {
     <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
   <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-cell-group class="order-list-item" v-for="item in listData" :key="item.Id" @click="goList(item)" inset>
+      <van-cell-group class="order-list-item" v-for="item in listData" :key="item.id" @click="goList(item)" inset>
       <van-row>
         <van-col span="24">
           品牌名称：{{ item.brand.brandName }}
