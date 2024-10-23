@@ -1,49 +1,36 @@
 <template>
-    <van-nav-bar title="系列款式订单" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
+    <van-nav-bar title="系列采购信息" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft">
     </van-nav-bar>
     <div class="se-main">
         <main class="scrollMain">
-            <!-- <van-empty description="暂无数据" v-show="listData.length === 0"></van-empty> -->
+            <van-empty description="暂无数据" v-show="listData.length === 0"></van-empty>
 
             <van-list class="order-list">
-                <van-row class="order-list-item" v-for="(item, index) in listData" :key="index" @click="go({ path: 'orderDetail', query:{id: item.Id, RegionId: item.RegionId, colorId: item.ColorId} })">
+                <van-row class="order-list-item" v-for="(item, index) in listData" :key="index"
+                    @click="go({ path: 'purchaseDetail', query: { contractId: item.contractId } })">
                     <van-col span="24" class="or-col">
                         序号：{{ (index + 1) }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        款号：{{ item.StyleNo }}
+                        生产合同编号：{{ item.contractNo }}
                     </van-col>
                     <van-col span="12" class="or-col">
-                        订单类型：{{ item.StyleType }}
+                        合同类型：{{ item.contractType }}
                     </van-col>
                     <van-col span="12" class="or-col">
-                        品牌：{{ item.Brand }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        离厂日期：{{ item.OrderDeliveryDate }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        业务组：{{ item.BusinessGroup }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        颜色：{{ item.Color }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        数量：{{ item.Qty }}
+                        供应商：{{ item.supplier }}
                     </van-col>
                     <van-col span="24" class="or-col">
-                        尺码：{{ item.Size }}
+                        采购公司：{{ item.company }}
                     </van-col>
-                    <van-col span="12" class="or-col">
-                        生产片区：{{ item.Region }}
+                    <van-col span="24" class="or-col">
+                        采购日期：{{ item.purchaseDate }}
                     </van-col>
-                    <van-col span="12" class="or-col">
-                        工厂/车间：{{ item.Factory }}
-                    </van-col>
+
                 </van-row>
 
             </van-list>
-
+            
         </main>
     </div>
 </template>
@@ -60,7 +47,8 @@ export default {
         const pageData = reactive({
             params: {
                 page: 1,
-                limit: 10,
+                limit: 20,
+                id: route.query.id
             },
             listData: [],
         });
@@ -71,8 +59,35 @@ export default {
 
         // 请求接口获取数据
         const getList = async () => {
-            const { code, rows } = await api.myStyleList(pageData.params);
+            const { code, rows } = await api.conllectionPurchaseList(pageData.params);
             if (code == 200) {
+
+                // let rows2 = [
+                //     {
+                //         "contractId": 205882,
+                //         "contractType": "辅料合同",
+                //         "contractNo": "224100327",
+                //         "supplier": "辅料通订",
+                //         "company": "江阴极客时装有限公司",
+                //         "purchaseDate": "2024-10-15"
+                //     },
+                //     {
+                //         "contractId": 205796,
+                //         "contractType": "面料合同",
+                //         "contractNo": "524100164",
+                //         "supplier": "绍兴鸿翔纺织贸易有限公司",
+                //         "company": "江阴巨匠贸易有限公司",
+                //         "purchaseDate": "2024-10-14"
+                //     },
+                //     {
+                //         "contractId": 205798,
+                //         "contractType": "辅料合同",
+                //         "contractNo": "224100283",
+                //         "supplier": "江阴市陆桥织带有限公司",
+                //         "company": "江阴巨匠贸易有限公司",
+                //         "purchaseDate": "2024-10-14"
+                //     }
+                // ]
                 pageData.listData = rows;
 
             } else {
@@ -99,6 +114,7 @@ export default {
     .order-list {
         padding: 0 10px;
     }
+
     .btn-requ {
         margin: 15px 0 15px;
     }
