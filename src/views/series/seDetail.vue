@@ -25,13 +25,13 @@
             </van-list>
             <van-divider />
             <div class="badge-list">
-                <div class="badge-it" @click="go({ path: '', query: {} })">
+                <div class="badge-it" @click="go({ path: 'styleOrder', query: {} })">
                     <div class="badge">
                         <van-icon name="column" size="38" />
                     </div>
                     <p>系列款式订单</p>
                 </div>
-                <div class="badge-it">
+                <div class="badge-it" @click="go({ path: 'purchaseList', query: {id: listData.id} })">
                     <div class="badge">
                         <van-icon name="shopping-cart" size="38" />
                     </div>

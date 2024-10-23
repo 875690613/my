@@ -103,7 +103,52 @@ const router = createRouter({
           path: 'styleOrder',
           name:'styleOrder',
           component: () => import('../views/series/styleOrder.vue')
-        }
+        },
+        {
+          path: 'orderDetail',
+          name:'orderDetail',
+          component: () => import('../views/series/orderDetail.vue')
+        },
+        {
+          path: 'orderState',
+          name:'orderState',
+          component: () => import('../views/series/orderState.vue')
+        },
+        {
+          path: 'fabric',
+          name:'fabric',
+          component: () => import('../views/series/fabric.vue')
+        },
+        {
+          path: 'customerOpinion',
+          name:'customerOpinion',
+          component: () => import('../views/series/customerOpinion.vue')
+        },
+        {
+          path: 'areaInfo',
+          name:'areaInfo',
+          component: () => import('../views/series/areaInfo.vue')
+        },
+        {
+          path: 'inspectionReport',
+          name:'inspectionReport',
+          component: () => import('../views/series/inspectionReport.vue')
+        },
+        {
+          path: 'sizeQuery',
+          name:'sizeQuery',
+          component: () => import('../views/series/sizeQuery.vue')
+        },
+        {
+          path: 'purchaseList',
+          name:'purchaseList',
+          component: () => import('../views/series/purchaseList.vue')
+        },
+        {
+          path: 'purchaseDetail',
+          name:'purchaseDetail',
+          component: () => import('../views/series/purchaseDetail.vue')
+        },
       ]
     },
 

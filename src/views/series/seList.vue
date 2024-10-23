@@ -96,7 +96,7 @@ export default {
                 0: '未营业',
                 1: '营业中',
             },
-            showCenter: true,
+            showCenter: false,
             showPicker: false,
             columns: [
                 { text: '杭州', value: 'Hangzhou' },
