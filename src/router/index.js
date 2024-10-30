@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
-const modules = import.meta.glob('./model/*.js', {eager: true})
+const modules = import.meta.glob('./model/*.js', { eager: true })
 
 const extendRoutes = Object.keys(modules).map((path) => {
   return modules[path].default
@@ -36,17 +36,17 @@ const router = createRouter({
         },
         {
           path: 'gifts',
-          name:'gifts',
+          name: 'gifts',
           component: () => import('../views/welfare/gifts.vue')
         },
         {
           path: 'myShop',
-          name:'myShop',
+          name: 'myShop',
           component: () => import('../views/myShop/index.vue')
         },
         {
           path: 'myShopLogin',
-          name:'myShopLogin',
+          name: 'myShopLogin',
           component: () => import('../views/myShop/login.vue')
         }
       ]
@@ -57,29 +57,29 @@ const router = createRouter({
       component: () => import('../views/recruit/reIndex.vue'),
       children: [
         {
-          path: 'list',
-          name:'list',
+          path: 'rlist',
+          name: 'rlist',
           component: () => import('../views/recruit/list.vue')
-        },{
+        }, {
           path: 'detail',
-          name:'detail',
+          name: 'detail',
           component: () => import('../views/recruit/detail.vue')
         }
       ]
     },
     {
       path: '/myProject',
-      name:'myProject',
+      name: 'myProject',
       component: () => import('../views/myProject/index.vue')
     },
     {
       path: '/myProjectLogin',
-      name:'myProjectLogin',
+      name: 'myProjectLogin',
       component: () => import('../views/myProject/login.vue')
     },
     {
       path: '/myProjectDetail',
-      name:'myProjectDetail',
+      name: 'myProjectDetail',
       component: () => import('../views/myProject/detail.vue')
     },
     {
@@ -90,83 +90,101 @@ const router = createRouter({
       children: [
         {
           path: 'login',
-          name:'login',
+          name: 'login',
           component: () => import('../views/series/login.vue')
         },
         {
           path: 'list',
-          name:'list',
+          name: 'list',
           component: () => import('../views/series/seList.vue')
         },
         {
           path: 'seDetail',
-          name:'seDetail',
+          name: 'seDetail',
           component: () => import('../views/series/seDetail.vue')
         },
         {
           path: 'styleOrder',
-          name:'styleOrder',
+          name: 'styleOrder',
           component: () => import('../views/series/styleOrder.vue')
         },
         {
           path: 'orderDetail',
-          name:'orderDetail',
+          name: 'orderDetail',
           component: () => import('../views/series/orderDetail.vue')
         },
         {
           path: 'orderState',
-          name:'orderState',
+          name: 'orderState',
           component: () => import('../views/series/orderState.vue')
         },
         {
           path: 'fabric',
-          name:'fabric',
+          name: 'fabric',
           component: () => import('../views/series/fabric.vue')
         },
         {
           path: 'customerOpinion',
-          name:'customerOpinion',
+          name: 'customerOpinion',
           component: () => import('../views/series/customerOpinion.vue')
         },
         {
           path: 'areaInfo',
-          name:'areaInfo',
+          name: 'areaInfo',
           component: () => import('../views/series/areaInfo.vue')
         },
         {
           path: 'inspectionReport',
-          name:'inspectionReport',
+          name: 'inspectionReport',
           component: () => import('../views/series/inspectionReport.vue')
         },
         {
           path: 'sizeQuery',
-          name:'sizeQuery',
+          name: 'sizeQuery',
           component: () => import('../views/series/sizeQuery.vue')
         },
         {
           path: 'purchaseList',
-          name:'purchaseList',
+          name: 'purchaseList',
           component: () => import('../views/series/purchaseList.vue')
         },
         {
           path: 'purchaseDetail',
-          name:'purchaseDetail',
+          name: 'purchaseDetail',
           component: () => import('../views/series/purchaseDetail.vue')
         },
         {
           path: 'seProductList',
-          name:'seProductList',
+          name: 'seProductList',
           component: () => import('../views/series/seProductList.vue')
         },
         {
           path: 'seProductDetail',
-          name:'seProductDetail',
+          name: 'seProductDetail',
           component: () => import('../views/series/seProductDetail.vue')
         },
         {
           path: 'seStyleList',
-          name:'seStyleList',
+          name: 'seStyleList',
           component: () => import('../views/series/seStyleList.vue')
+        },
+      ]
+    },
+    {
+      path: '/stall',
+      name: 'stall',
+      component: () => import('../views/stall/stIndex.vue'),
+      redirect: '/stall/login',
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('../views/stall/login.vue')
+        },
+        {
+          path: 'stallList',
+          name: 'stallList',
+          component: () => import('../views/stall/stallList.vue')
         },
       ]
     },
