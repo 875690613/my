@@ -86,11 +86,11 @@ const router = createRouter({
       path: '/series',
       name: 'series',
       component: () => import('../views/series/seIndex.vue'),
-      redirect: '/series/login',
+      redirect: '/series/slogin',
       children: [
         {
-          path: 'login',
-          name: 'login',
+          path: 'slogin',
+          name: 'slogin',
           component: () => import('../views/series/login.vue')
         },
         {
