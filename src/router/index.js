@@ -188,6 +188,19 @@ const router = createRouter({
         },
       ]
     },
+    {
+      path: '/supplier',
+      name: 'supplier',
+      component: () => import('../views/supplier/spIndex.vue'),
+      redirect: '/supplier/login',
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('../views/supplier/supLogin.vue')
+        },
+      ]
+    },
     ...extendRoutes
   ]
 })
