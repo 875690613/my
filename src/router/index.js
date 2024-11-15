@@ -204,6 +204,16 @@ const router = createRouter({
           name: 'spMap',
           component: () => import('../views/supplier/spMap.vue')
         },
+        {
+          path: 'gysInfo',
+          name: 'gysInfo',
+          component: () => import('../views/supplier/gysInfo.vue')
+        },
+        {
+          path: 'gysOrderInfo',
+          name: 'gysOrderInfo',
+          component: () => import('../views/supplier/gysOrderInfo.vue')
+        },
       ]
     },
     ...extendRoutes
