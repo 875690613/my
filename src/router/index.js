@@ -199,6 +199,16 @@ const router = createRouter({
           name: 'login',
           component: () => import('../views/supplier/supLogin.vue')
         },
+        {
+          path: 'gysInfo',
+          name: 'gysInfo',
+          component: () => import('../views/supplier/gysInfo.vue')
+        },
+        {
+          path: 'gysOrderInfo',
+          name: 'gysOrderInfo',
+          component: () => import('../views/supplier/gysOrderInfo.vue')
+        },
       ]
     },
     ...extendRoutes
