@@ -199,6 +199,11 @@ const router = createRouter({
           name: 'login',
           component: () => import('../views/supplier/supLogin.vue')
         },
+        {
+          path: 'spMap',
+          name: 'spMap',
+          component: () => import('../views/supplier/spMap.vue')
+        },
       ]
     },
     ...extendRoutes
