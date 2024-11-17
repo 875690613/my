@@ -17,4 +17,9 @@ export default {
     conllectionProductDetail: (params) => request.get('/api/myStyle/conllectionProductDetail', { ...params }),
     productStyleList: (params) => request.post('/api/myStyle/productStyleList', { ...params }),
     conllectionAllocationList: (params) => request.post('/api/myStyle/conllectionAllocationList', { ...params }),
+    clientRecord: (id) => request.get(`/api/mystyle/clientRecord?id=${id}`),
+    clientProduct: (id) => request.get(`/api/myStyle/clientProduct?id=${id}`),
+    clientContract: (id) => request.get(`/api/myStyle/clientContract?id=${id}`),
+    balance: (contractId) => request.get(`/api/myStyle/balance?contractId=${contractId}`),
+    purchaseDetail: (contractId) => request.get(`/api/myStyle/purchaseDetail?contractId=${contractId}`),
 }

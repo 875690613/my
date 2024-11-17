@@ -1,62 +1,32 @@
 <script>
+import api from '@/request/api.js';
 import { ref } from 'vue';
 import { showToast } from 'vant';
 
 export default {
   setup() {
-    const value = ref('');
-    const active = ref(0);
-    const count = ref(0);
-    const loading = ref(false);
-    const list = ref([]);
-    const finished = ref(false);
-    const refreshing = ref(false);
-    const onRefresh = () => {
-      setTimeout(() => {
-        showToast('刷新成功');
-        loading.value = false;
-        count.value++;
-      }, 1000);
-    };
-    const onLoad = () => {
-      setTimeout(() => {
-        if (refreshing.value) {
-          list.value = [];
-          refreshing.value = false;
-        }
+    const dzInfo = ref({});
+    const dzList = ref([]);
 
-        for (let i = 0; i < 10; i++) {
-          list.value.push(list.value.length + 1);
-        }
-        loading.value = false;
-
-        if (list.value.length >= 40) {
-          finished.value = true;
-        }
-      }, 1000);
+    const getBalance = () => {
+        api.balance(59016).then(res => {
+            dzInfo.value = res.rows
+        })
     };
 
-    const onRefresh1 = () => {
-      // 清空列表数据
-      finished.value = false;
-
-      // 重新加载数据
-      // 将 loading 设置为 true，表示处于加载状态
-      loading.value = true;
-      onLoad();
+    const getPurchaseDetail = () => {
+        api.purchaseDetail(59016).then(res => {
+            console.log(res)
+            dzList.value = res.rows.rows
+        })
     };
+
+    getBalance()
+    getPurchaseDetail()
 
     return {
-        value,
-        list,
-        finished,
-        refreshing,
-        active,
-        count,
-        loading,
-        onRefresh,
-        onRefresh1,
-        onLoad
+        dzInfo,
+        dzList
     };
   },
 };
@@ -68,14 +38,14 @@ export default {
         <div style="display: flex;align-items: center;margin-bottom: 30px;padding: 0 20px;">
             <div style="display: flex;align-items: center;width: 50%;">
                 <div style="color: #6C6C6C;flex-shrink: 0;">对账状态：</div>
-                <div style="color: #000000;">未对账</div>
+                <div style="color: #000000;">{{ dzInfo.isBalance }}</div>
             </div>
             <div style="display: flex;align-items: center;width: 50%;">
                 <div style="color: #6C6C6C;flex-shrink: 0;">对账日期：</div>
-                <div style="color: #000000;">2024-11-11</div>
+                <div style="color: #000000;">{{ dzInfo.balanceDate }}</div>
             </div>
         </div>
-        <div style="border: 1px solid #BBBBBB;">
+        <div style="border: 1px solid #BBBBBB;margin-top: 10px;" v-for="(item, index) in dzList" :key="index">
             <div style="display: flex;padding: 10px;">
                 <div style="display: flex;width: 50%;">
                     <div style="color: #6C6C6C;flex-shrink: 0;">采购订单号：</div>
