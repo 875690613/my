@@ -2,9 +2,12 @@
 import api from '@/request/api.js';
 import { ref } from 'vue';
 import { showToast } from 'vant';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const route = useRoute();
+    const router = useRouter();
     const value = ref('');
     const record = ref({});
     const active = ref(0);
@@ -42,7 +45,8 @@ export default {
     };
 
     const onLoad = () => {
-        api.clientProduct(23).then(res => {
+        api.clientProduct(route.query.id).then(res => {
+        // api.clientProduct(23).then(res => {
             if (refreshing.value) {
                 list.value = [];
                 refreshing.value = false;
@@ -74,7 +78,8 @@ export default {
     };
 
     const onLoad1 = () => {
-        api.clientContract(23).then(res => {
+        api.clientContract(route.query.id).then(res => {
+            // api.clientContract(23).then(res => {
             if (refreshing1.value) {
                 list1.value = [];
                 refreshing1.value = false;
@@ -116,9 +121,12 @@ export default {
     };
 
     const getClientRecord = async () => {
-        const result = await api.clientRecord(23)
+        const result = await api.clientRecord(route.query.id)
         record.value = result.rows
-        console.log(record)
+    }
+
+    const goInfo = (id) => {
+        router.push({ path: "gysOrderInfo", query: { contractId: id} });
     }
 
     getClientRecord()
@@ -139,7 +147,8 @@ export default {
         onRefresh1,
         onLoad,
         onLoad1,
-        onClickTab
+        onClickTab,
+        goInfo
     };
   },
 };
@@ -195,7 +204,7 @@ export default {
                         @load="onLoad1"
                     >
                         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-                        <div style="display: flex;align-items: center;justify-content: space-between;height: 70px;border-bottom: 1px solid #E5E5E5;margin: 0 10px;padding: 0 10px;" v-for="(item, index) in list1" :key="index">
+                        <div style="display: flex;align-items: center;justify-content: space-between;height: 70px;border-bottom: 1px solid #E5E5E5;margin: 0 10px;padding: 0 10px;" v-for="(item, index) in list1" :key="index" @click="goInfo(item.ContractId)">
                             <div style="color: #000;">{{ item.ContractNo }}</div>
                             <div style="display: flex;align-items: center;">
                                 <div style="margin-right: 5px;">
