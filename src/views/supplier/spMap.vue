@@ -6,70 +6,38 @@
     </van-nav-bar>
     <div class="se-main">
         <van-popup v-model:show="showCenter" round :style="{ padding: '12px' }">
-            <van-field v-model="clientName" is-link readonly name="picker" label="客户" placeholder="请选择"
+            <van-field v-model="params.stockType" is-link readonly name="picker" label="类型" placeholder="请选择"
                 @click="showPicker = true" />
-            <van-field v-model="braName" is-link readonly name="picker" label="品牌" placeholder="请选择"
-            @click="braEvent" />
-            <van-field v-model="yearVal" is-link readonly name="picker" label="上市年份" placeholder="请选择"
-                @click="showYears = true" />
+            <van-field v-model="params.address" is-link readonly name="picker" label="地区" placeholder="请选择"
+                @click="showBra = true" />
+            
             <van-button type="primary" class="btn-requ" @click="getData()" block>查询</van-button>
         </van-popup>
         <van-popup v-model:show="showPicker" position="bottom">
-            <van-picker title="选择客户" 
-                :columns="clientArr" 
-                @confirm="onConfirm" 
-                @cancel="showPicker = false"
-                :columns-field-names="{text: 'name', value: 'id'}"
-            />
+            <van-picker title="选择类型" :columns="typeArr" @confirm="onConfirm" @cancel="showPicker = false" />
         </van-popup>
         <van-popup v-model:show="showBra" position="bottom">
-            <van-picker title="选择品牌" 
-                :columns="brandArr" 
-                @confirm="brandConfirm" 
-                @cancel="showBra = false"
-                :columns-field-names="{text: 'name', value: 'id'}"
-            />
-        </van-popup>
-        <van-popup v-model:show="showYears" position="bottom">
-            <van-picker title="选择年份" 
-                :columns="years" 
-                @confirm="yearConfirm" 
-                @cancel="showYears = false"
-            />
+            <van-area title="地区" :area-list="areaList" @confirm="areaConfirm" @cancel="showBra = false" />
         </van-popup>
         <main class="scrollMain">
             <div class="search-inp">
-                <input type="text" placeholder="请输入">
+                <input type="text" v-model="params.keyword" @blur="getData()" placeholder="请输入">
             </div>
             <div class="map-sec">
-
+                <baidu-map class="map" @ready="mapReady" ak="9gESWUQzODCzaVsK3oo6CohG8RGI91xo" v="3.0" type="API"
+                    :center="center" :scroll-wheel-zoom="true" :double-click-zoom="true" :pinch-to-zoom="true"
+                    :zoom="15">
+                </baidu-map>
             </div>
             <!-- <van-empty description="暂无数据" v-show="listData.length === 0"></van-empty> -->
-
-            <!-- <van-list class="order-list">
-                <van-row class="order-list-item" 
-                    v-for="(item, index) in listData" 
-                    :key="index"
-                    @click="checkDetail(item)"
-                >
-                    <van-col span="24" class="or-col">
-                        序号：{{ (index + 1) }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        客户：{{ item.client }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        品牌：{{ item.brand }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        系列：{{ item.collectionNO }}
-                    </van-col>
-                    <van-col span="12" class="or-col">
-                        年份：{{ item.year }}
-                    </van-col>
-                </van-row>
-
-            </van-list> -->
+            <div class="address-list">
+                <ul>
+                    <li v-for="(item, index) in listData" :key="item">
+                        <p class="com-name">{{item.ShortName}}</p>
+                        <p class="address-name">{{item.Address}}</p>
+                    </li>
+                </ul>
+            </div>
 
         </main>
     </div>
@@ -78,57 +46,41 @@
 import api from '@/request/api.js';
 import { reactive, toRefs } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { BaiduMap } from 'vue-baidu-map-3x';
+import { getImageUrl } from '@/utils/common';
+import { areaList } from '@vant/area-data';
+
+const acUrl = getImageUrl('position2.png');
 
 export default {
+    components: {
+        BaiduMap
+    },
     setup() {
         const router = useRouter();
-        const route = useRoute();
 
         const pageData = reactive({
             params: {
                 page: 1,
                 limit: 20,
-                brandId: null,
-                clientId: null,
-                year: null,
+                keyword: '',
+                address: '',
+                stockType: '',
             },
             clientParams: {
                 keyword: null
             },
-            clientName: '',
-            clientArr: [],
+            typeArr: [
+                { text: '面料', value: '面料' },
+                { text: '辅料', value: '辅料' },
+            ],
             listData: [],
-            stateWord: {
-                0: '未营业',
-                1: '营业中',
-            },
             showCenter: false,
             showPicker: false,
-            columns: [
-                { text: '杭州', value: 'Hangzhou' },
-                { text: '宁波', value: 'Ningbo' },
-                { text: '温州', value: 'Wenzhou' },
-                { text: '绍兴', value: 'Shaoxing' },
-                { text: '湖州', value: 'Huzhou' },
-            ],
             result: '',
             brandArr: [],
-            braName: '',
             yearVal: '',
             showBra: false,
-            showYears: false,
-            years: [
-                { text: '2020', value: '2020' },
-                { text: '2021', value: '2021' },
-                { text: '2022', value: '2022' },
-                { text: '2023', value: '2023' },
-                { text: '2024', value: '2024' },
-                { text: '2025', value: '2025' },
-                { text: '2026', value: '2026' },
-                { text: '2027', value: '2027' },
-                { text: '2028', value: '2028' },
-                { text: '2029', value: '2029' },
-            ]
         });
 
         const go = str => {
@@ -137,84 +89,97 @@ export default {
 
         // 请求接口获取数据
         const getData = async () => {
-            const { code, rows } = await api.brandList(pageData.params);
             
+            const { code, rows } = await api.clientAddresses(pageData.params);
+
             if (code == 200) {
                 pageData.listData = rows;
-                pageData.showCenter = false;
+                // pageData.showCenter = false;
             } else {
                 // 获取数据失败提示
                 showToast("获取数据失败");
             }
         };
-        // getData();
+        getData();
 
-        // 获取客户列表
-        const getClientList = async () => {
-            const { code, rows } = await api.clientList(pageData.params);
+
+        const onConfirm = ({ selectedOptions }) => {
+            pageData.params.stockType = selectedOptions[0]['value'];
             
-            if (code == 200) {
-                pageData.clientArr = rows;
-                
-            } else {
-                showToast("获取客户列表失败");
-            }
-        };
-        // getClientList();
-
-        const onConfirm = ({selectedOptions}) => {
-            pageData.clientName = selectedOptions[0]['name'];
-            pageData.params.clientId = selectedOptions[0]['id'];
             pageData.showPicker = false;
-
-            getBrandByClient(pageData.params.clientId);
         };
 
-        // 根据客户获取品牌
-        const getBrandByClient = async (id) => {
-            const { code, rows } = await api.queryBrand({clientId: id});
+        const areaConfirm = ({ selectedOptions }) => {
+            console.log(selectedOptions);
             
-            if (code == 200) {
-                pageData.brandArr = rows;
-
-            } else {
-                showToast("获取品牌失败");
-            }
-        };
-
-        const brandConfirm = ({selectedOptions}) => {
-            pageData.braName = selectedOptions[0]['name'];
-            pageData.params.brandId = selectedOptions[0]['id'];
+            pageData.params.address = selectedOptions[0]['text'] + selectedOptions[1]['text'] + selectedOptions[2]['text'];
             pageData.showBra = false;
         };
 
-        const yearConfirm = ({selectedOptions}) => {
-            pageData.yearVal = selectedOptions[0]['value'];
-            pageData.params.year = selectedOptions[0]['value'];
-            pageData.showYears = false;
-        };
-
-        const braEvent = () => {
-            if (pageData.brandArr.length == 0) {
-                showToast('请先选择客户');
-            } else {
-                pageData.showBra = true;
-            }
-            
-        }
-
         const checkDetail = item => {
-            router.push({ path: 'seDetail', query: { id: item.id} });
+            router.push({ path: 'seDetail', query: { id: item.id } });
         }
+        const center = reactive(
+            { lng: 116.404, lat: 39.915 }
+        )
+        const mapReady = ({ BMap, map }) => {
+            setTimeout(() => {
+                // 获取自动定位方法
+                var geolocation = new BMap.Geolocation()
+                // 获取逆解析方法实例
+                new BMap.Geocoder()
+                // 获取自动定位获取的坐标信息
+                // geolocation.enableSDKlocation();
+                geolocation.getCurrentPosition(
+                    function (r) {
+                        let arr = [];
+                        if (r) {
+                            arr.push(r.point.lng);
+                            arr.push(r.point.lat);
+                            center.lng = r.point.lng;
+                            center.lat = r.point.lat;
+                            var point = new BMap.Point(center.lng, center.lat);
+                            map.centerAndZoom(point, 15);
+                            var myIcon = new BMap.Icon(acUrl.href, new BMap.Size(70, 80), {
+                                // 指定定位位置。   
+                                // 当标注显示在地图上时，其所指向的地理位置距离图标左上    
+                                // 角各偏移10像素和25像素。您可以看到在本例中该位置即是   
+                                // 图标中央下端的尖角位置。    
+                                anchor: new BMap.Size(0, 5),
+                                // 设置图片偏移。   
+                                // 当您需要从一幅较大的图片中截取某部分作为标注图标时，您   
+                                // 需要指定大图的偏移位置，此做法与css sprites技术类似。    
+                                imageOffset: new BMap.Size(0, 0)   // 设置图片偏移    
+                            });
+                            var marker = new BMap.Marker(point, { icon: myIcon });
+
+                            // 创建标注    
+                            map.addOverlay(marker);
+                            // var local = new BMap.LocalSearch(map, {
+                            //     renderOptions: { map: map }
+                            // });
+                            // local.search("江阴市南外环路660");
+                        } else {
+                            // getStoreAddress([], {});
+                        }
+                        // getStoreAddress([], {});
+                    },
+                    { enableHighAccuracy: true }
+                )
+            }, 200);
+        }
+        console.log(areaList);
+        
         return {
             ...toRefs(pageData),
             go,
             onConfirm,
-            brandConfirm,
-            yearConfirm,
-            braEvent,
+            areaConfirm,
             getData,
             checkDetail,
+            mapReady,
+            center,
+            areaList,
         }
     }
 }
@@ -226,8 +191,11 @@ export default {
 
     .scrollMain {
         padding: 0 10px;
+
         .search-inp {
+            padding-top: 2px;
             width: 100%;
+
             input {
                 width: 100%;
                 height: 30px;
@@ -236,10 +204,16 @@ export default {
                 text-indent: 10px;
             }
         }
+
         .map-sec {
-            height: 300px;
+            padding-top: 10px;
+
+            .map {
+                height: 280px;
+            }
         }
     }
+
     .btn-requ {
         margin: 15px 0 15px;
     }
@@ -255,6 +229,26 @@ export default {
 
         .or-col {
             padding: 5px 0;
+        }
+    }
+    .address-list {
+        margin-top: 10px;
+        margin-bottom: 5px;
+        height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        ul {
+            li {
+                margin-bottom: 10px;
+                padding: 8px;
+                min-height: 40px;
+                font-size: 12px;
+                background: #fff;
+                border: 1px solid #bbbbbb;
+                .address-name {
+                    color: #9a9a9a;
+                }
+            }
         }
     }
 

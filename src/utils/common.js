@@ -6,3 +6,10 @@ export function removeEmptyProps(obj) {
   }
   return obj
 }
+export function getImageUrl(name) {
+  return new URL(
+    // 本地资源路径
+    `../assets/images/${name}`,
+    import.meta.url
+  );
+};

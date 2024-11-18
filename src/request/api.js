@@ -17,4 +17,5 @@ export default {
     conllectionProductDetail: (params) => request.get('/api/myStyle/conllectionProductDetail', { ...params }),
     productStyleList: (params) => request.post('/api/myStyle/productStyleList', { ...params }),
     conllectionAllocationList: (params) => request.post('/api/myStyle/conllectionAllocationList', { ...params }),
+    clientAddresses: (params) => request.post('/api/myStyle/clientAddresses', { ...params }),
 }
