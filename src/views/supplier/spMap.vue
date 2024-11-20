@@ -10,8 +10,9 @@
                 @click="showPicker = true" />
             <van-field v-model="params.address" is-link readonly name="picker" label="地区" placeholder="请选择"
                 @click="showBra = true" />
-            
-            <van-button type="primary" class="btn-requ" @click="getData()" block>查询</van-button>
+
+            <van-button type="primary" class="btn-requ" @click="requestData()" block>查询</van-button>
+            <van-button plain type="primary" class="btn-requ" @click="resetData()" block>重置</van-button>
         </van-popup>
         <van-popup v-model:show="showPicker" position="bottom">
             <van-picker title="选择类型" :columns="typeArr" @confirm="onConfirm" @cancel="showPicker = false" />
@@ -21,7 +22,7 @@
         </van-popup>
         <main class="scrollMain">
             <div class="search-inp">
-                <input type="text" v-model="params.keyword" @blur="getData()" placeholder="请输入">
+                <input type="text" v-model="params.keyword" @blur="requestData()" placeholder="请输入">
             </div>
             <div class="map-sec">
                 <baidu-map class="map" @ready="mapReady" ak="9gESWUQzODCzaVsK3oo6CohG8RGI91xo" v="3.0" type="API"
@@ -31,12 +32,23 @@
             </div>
             <!-- <van-empty description="暂无数据" v-show="listData.length === 0"></van-empty> -->
             <div class="address-list">
-                <ul>
-                    <li v-for="(item, index) in listData" :key="item">
-                        <p class="com-name">{{item.ShortName}}</p>
-                        <p class="address-name">{{item.Address}}</p>
-                    </li>
-                </ul>
+                <!-- <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+                    <van-cell v-for="item in list" :key="item" :title="item" />
+                </van-list> -->
+                <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="getData">
+                    <ul>
+                        <li v-for="(item, index) in listData" :key="item" :class="{'active': item.Id == currentId}" @click="positionShow(item)">
+                            <div>
+                                <p class="com-name">{{ item.ShortName }}</p>
+                                <p class="address-name">{{ item.Address }}</p>
+                            </div>
+                            <div class="plain-detail">
+                                <van-button plain type="primary" @click.stop="go({path: 'gysInfo', query: {id: item.Id}})" size="mini">详情</van-button>
+                            </div>
+                        </li>
+                    </ul>
+                </van-list>
+
             </div>
 
         </main>
@@ -44,7 +56,7 @@
 </template>
 <script>
 import api from '@/request/api.js';
-import { reactive, toRefs } from 'vue';
+import { reactive, toRefs, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { BaiduMap } from 'vue-baidu-map-3x';
 import { getImageUrl } from '@/utils/common';
@@ -61,8 +73,8 @@ export default {
 
         const pageData = reactive({
             params: {
-                page: 1,
-                limit: 20,
+                page: 0,
+                limit: 10,
                 keyword: '',
                 address: '',
                 stockType: '',
@@ -81,7 +93,13 @@ export default {
             brandArr: [],
             yearVal: '',
             showBra: false,
+            finished: false,
+            loading: false,
+            konked: false,
+            currentId: ''
+            
         });
+        const mapObj = ref(null);
 
         const go = str => {
             router.push(str);
@@ -89,12 +107,20 @@ export default {
 
         // 请求接口获取数据
         const getData = async () => {
-            
-            const { code, rows } = await api.clientAddresses(pageData.params);
+            pageData.params.page++;
+            const { code, rows, total } = await api.clientAddresses(pageData.params);
 
             if (code == 200) {
-                pageData.listData = rows;
+                for(let i = 0; i < rows.length; i++) {
+                    pageData.listData.push(rows[i]);
+                }
+                // pageData.listData = rows;
                 // pageData.showCenter = false;
+                pageData.loading = false;
+                pageData.showPicker = false;
+                if (pageData.listData.length >= total) {
+                    pageData.finished = true;
+                }
             } else {
                 // 获取数据失败提示
                 showToast("获取数据失败");
@@ -105,13 +131,12 @@ export default {
 
         const onConfirm = ({ selectedOptions }) => {
             pageData.params.stockType = selectedOptions[0]['value'];
-            
+
             pageData.showPicker = false;
         };
 
         const areaConfirm = ({ selectedOptions }) => {
             console.log(selectedOptions);
-            
             pageData.params.address = selectedOptions[0]['text'] + selectedOptions[1]['text'] + selectedOptions[2]['text'];
             pageData.showBra = false;
         };
@@ -123,6 +148,7 @@ export default {
             { lng: 116.404, lat: 39.915 }
         )
         const mapReady = ({ BMap, map }) => {
+            mapObj.value = map;
             setTimeout(() => {
                 // 获取自动定位方法
                 var geolocation = new BMap.Geolocation()
@@ -136,6 +162,8 @@ export default {
                         if (r) {
                             arr.push(r.point.lng);
                             arr.push(r.point.lat);
+                            console.log(r.point.lng, r.point.lat);
+                            
                             center.lng = r.point.lng;
                             center.lat = r.point.lat;
                             var point = new BMap.Point(center.lng, center.lat);
@@ -169,7 +197,39 @@ export default {
             }, 200);
         }
         console.log(areaList);
-        
+
+        const onRefresh = () => {
+            // 清空列表数据
+            pageData.finished = false;
+
+            // 重新加载数据
+            // 将 loading 设置为 true，表示处于加载状态
+            pageData.loading = true;
+            getData();
+        };
+
+        const requestData = () => {
+            pageData.finished = false;
+            pageData.params.page = 0;
+            pageData.listData.length = 0;
+            getData();
+        }
+
+        const resetData = () => {
+            pageData.finished = false;
+            pageData.params.stockType = null;
+            pageData.params.address = null;
+            pageData.params.keyword = '';
+            requestData();
+        }
+
+        const positionShow = item => {
+            var local = new BMap.LocalSearch(mapObj.value, {
+                renderOptions:{map: mapObj.value}
+            });
+            pageData.currentId = item.Id;
+            local.search(item.Address);
+        }
         return {
             ...toRefs(pageData),
             go,
@@ -180,6 +240,10 @@ export default {
             mapReady,
             center,
             areaList,
+            onRefresh,
+            requestData,
+            resetData,
+            positionShow
         }
     }
 }
@@ -231,23 +295,39 @@ export default {
             padding: 5px 0;
         }
     }
+
     .address-list {
         margin-top: 10px;
         margin-bottom: 5px;
         height: 400px;
         overflow-y: auto;
         overflow-x: hidden;
+
         ul {
             li {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
                 margin-bottom: 10px;
                 padding: 8px;
                 min-height: 40px;
                 font-size: 12px;
                 background: #fff;
                 border: 1px solid #bbbbbb;
+
                 .address-name {
                     color: #9a9a9a;
                 }
+                .plain-detail {
+                    padding-left: 10px;
+                    width: 70px;
+                    button {
+                        width: 60px;
+                    }
+                }
+            }
+            .active {
+                border: 1px solid #1989fa;
             }
         }
     }
