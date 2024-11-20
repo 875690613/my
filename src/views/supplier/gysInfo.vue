@@ -129,6 +129,10 @@ export default {
         router.push({ path: "gysOrderInfo", query: { contractId: id} });
     }
 
+    const onClickLeft = () => {
+        router.back();
+    }
+
     getClientRecord()
 
     return {
@@ -148,6 +152,7 @@ export default {
         onLoad,
         onLoad1,
         onClickTab,
+        onClickLeft,
         goInfo
     };
   },
@@ -155,11 +160,20 @@ export default {
 </script>
 
 <template>
-    <div style="height: 100vh;">
-        <van-tabs v-model:active="active" sticky class="selectTab" @click-tab="onClickTab">
+    <div>
+        <van-nav-bar
+            title=""
+            left-text=""
+            fixed
+            placeholder
+            z-index="999999"
+            left-arrow
+            @click-left="onClickLeft"
+        />
+        <van-tabs v-model:active="active" class="selectTab" @click-tab="onClickTab">
             <van-tab title="供应档案">
                 <div style="padding: 30px 20px;">
-                    <img src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" style="display: block;width: 100%;">
+                    <img :src="record.businessLicense" style="display: block;width: 100%;">
                 </div>
                 <van-field label="供应商名称：" label-align="right" :model-value="record.shortName" readonly />
                 <van-field label="供应商类型：" label-align="right" :model-value="record.supplierType" readonly />

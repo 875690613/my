@@ -2,11 +2,12 @@
 import api from '@/request/api.js';
 import { ref } from 'vue';
 import { showToast } from 'vant';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const dzInfo = ref({});
     const dzList = ref([]);
 
@@ -22,10 +23,15 @@ export default {
         })
     };
 
+    const onClickLeft = () => {
+        router.back();
+    }
+
     getBalance()
     getPurchaseDetail()
 
     return {
+        onClickLeft,
         dzInfo,
         dzList
     };
@@ -35,6 +41,14 @@ export default {
 
 <template>
     <div style="padding: 10px;">
+        <van-nav-bar
+            title=""
+            left-text=""
+            fixed
+            placeholder
+            left-arrow
+            @click-left="onClickLeft"
+        />
         <div style="height: 40px;line-height: 40px;text-align: center;border-top: 1px solid #E5E5E5;border-bottom: 1px solid #E5E5E5;margin-bottom: 30px;color: #6C6C6C;">合同号：3241111001</div>
         <div style="display: flex;align-items: center;margin-bottom: 30px;padding: 0 20px;">
             <div style="display: flex;align-items: center;width: 50%;">
