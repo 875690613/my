@@ -19,7 +19,7 @@ export default {
 
     const getPurchaseDetail = () => {
         api.purchaseDetail(route.query.contractId).then(res => {
-            dzList.value = res.rows.rows
+            dzList.value = res.rows
         })
     };
 
@@ -213,6 +213,7 @@ export default {
                 </div>
             </div>
         </div>
+        <van-back-top />
     </div>
 </template>
 

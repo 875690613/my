@@ -8,13 +8,16 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const value = ref('');
+    const keyword = ref('');
+    const keyword1 = ref('');
     const record = ref({});
     const active = ref(0);
     const loading = ref(false);
     const list = ref([]);
     const finished = ref(false);
     const refreshing = ref(false);
+    const page = ref(0);
+    const page1 = ref(0);
     const loading1 = ref(false);
     const list1 = ref([]);
     const finished1 = ref(false);
@@ -25,10 +28,12 @@ export default {
             getClientRecord()
         }
         if (title === '供应商产品') {
+            page.value = 0
             list.value = []
             onRefresh()
         }
         if (title === '供应商合同') {
+            page1.value = 0
             list1.value = []
             onRefresh1()
         }
@@ -41,73 +46,55 @@ export default {
         // 重新加载数据
         // 将 loading 设置为 true，表示处于加载状态
         loading.value = true;
+        page.value = 0
+        list.value = []
         onLoad();
     };
 
     const onLoad = () => {
-        api.clientProduct(route.query.id).then(res => {
-        // api.clientProduct(23).then(res => {
+        page.value++
+        api.clientProduct({
+            keyword: keyword.value,
+            id: route.query.id,
+            page: page.value,
+            limit: 20
+        }).then(res => {
+            console.log(res.rows.length)
             if (refreshing.value) {
                 list.value = [];
                 refreshing.value = false;
             }
 
-            list.value = list.value.concat(res.rows.rows)
+            list.value = list.value.concat(res.rows)
 
             loading.value = false;
-
-            // if (res.rows.rows.length === 0) {
+            if (list.value.length >= res.total) {
                 finished.value = true;
-            // }
+            }
         })
-    //   setTimeout(() => {
-    //     if (refreshing.value) {
-    //       list.value = [];
-    //       refreshing.value = false;
-    //     }
-
-    //     for (let i = 0; i < 10; i++) {
-    //       list.value.push(list.value.length + 1);
-    //     }
-    //     loading.value = false;
-
-    //     if (list.value.length >= 40) {
-    //       finished.value = true;
-    //     }
-    //   }, 1000);
     };
 
     const onLoad1 = () => {
-        api.clientContract(route.query.id).then(res => {
-            // api.clientContract(23).then(res => {
+        page1.value++
+        api.clientContract({
+            keyword: keyword1.value,
+            id: route.query.id,
+            page: page1.value,
+            limit: 20
+        }).then(res => {
             if (refreshing1.value) {
                 list1.value = [];
                 refreshing1.value = false;
             }
 
-            list1.value = list1.value.concat(res.rows.rows)
+            list1.value = list1.value.concat(res.rows)
 
             loading1.value = false;
 
-            // if (res.rows.rows.length === 0) {
+            if (list1.value.length >= res.total) {
                 finished1.value = true;
-            // }
+            }
         })
-    //   setTimeout(() => {
-    //     if (refreshing1.value) {
-    //       list1.value = [];
-    //       refreshing1.value = false;
-    //     }
-
-    //     for (let i = 0; i < 10; i++) {
-    //       list1.value.push(list1.value.length + 1);
-    //     }
-    //     loading1.value = false;
-
-    //     if (list1.value.length >= 40) {
-    //       finished1.value = true;
-    //     }
-    //   }, 1000);
     };
 
     const onRefresh1 = () => {
@@ -117,6 +104,8 @@ export default {
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       loading1.value = true;
+      page1.value = 0
+      list1.value = []
       onLoad1();
     };
 
@@ -135,9 +124,22 @@ export default {
 
     getClientRecord()
 
+    const onSearch = () => {
+        page.value = 0
+        list.value = []
+        onRefresh()
+    }
+
+    const onSearch1 = () => {
+        page1.value = 0
+        list1.value = []
+        onRefresh1()
+    }
+
     return {
         record,
-        value,
+        keyword,
+        keyword1,
         list,
         finished,
         refreshing,
@@ -153,6 +155,8 @@ export default {
         onLoad1,
         onClickTab,
         onClickLeft,
+        onSearch,
+        onSearch1,
         goInfo
     };
   },
@@ -182,8 +186,8 @@ export default {
                 <van-field label="通讯地址：" label-align="right" :model-value="record.address" readonly />
             </van-tab>
             <van-tab title="供应商产品" >
-                <van-sticky :offset-top="50">
-                    <van-search v-model="value" placeholder="请输入搜索关键词" />
+                <van-sticky :offset-top="46">
+                    <van-search v-model="keyword" placeholder="请输入搜索关键词" @search="onSearch" />
                 </van-sticky>
                 <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
                     <van-list
@@ -207,8 +211,8 @@ export default {
                 </van-pull-refresh>
             </van-tab>
             <van-tab title="供应商合同">
-                <van-sticky :offset-top="50">
-                    <van-search v-model="value" placeholder="请输入搜索关键词" />
+                <van-sticky :offset-top="46">
+                    <van-search v-model="keyword1" placeholder="请输入搜索关键词" @search="onSearch1" />
                 </van-sticky>
                 <van-pull-refresh v-model="refreshing1" @refresh="onRefresh1">
                     <van-list
@@ -232,6 +236,8 @@ export default {
                     </van-list>
                 </van-pull-refresh>
             </van-tab>
+            
+            <van-back-top />
             <!-- <van-tab title="标签 4">内容 4</van-tab> -->
         </van-tabs>
     </div>
