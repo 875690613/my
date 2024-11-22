@@ -18,7 +18,7 @@ export default {
     productStyleList: (params) => request.post('/api/myStyle/productStyleList', { ...params }),
     conllectionAllocationList: (params) => request.post('/api/myStyle/conllectionAllocationList', { ...params }),
     clientAddresses: (params) => request.post('/api/myStyle/clientAddresses', { ...params }),
-    clientRecord: (id) => request.get(`/api/mystyle/clientRecord?id=${id}`),
+    clientRecord: (id) => request.get(`/api/myStyle/clientRecord?id=${id}`),
     clientProduct: (params) => request.post(`/api/myStyle/clientProduct`, { ...params }),
     clientContract: (params) => request.post(`/api/myStyle/clientContract`, { ...params }),
     balance: (contractId) => request.get(`/api/myStyle/balance?contractId=${contractId}`),
