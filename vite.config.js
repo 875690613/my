@@ -99,6 +99,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/sys/, '')
       },
+      '/api/officeSuppliesApplication': {
+        target: 'https://welfare.zhuritec.com/api/officeSuppliesApplication',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/officeSuppliesApplication/, '')
+      }
     }
   },
   resolve: {

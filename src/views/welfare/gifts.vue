@@ -177,8 +177,8 @@ onMounted(() => {
   
     <!-- 扫码验证员工身份 -->
     <div v-if="step === 0" class="scan-salary-wrapper">
-        <div style="color: white; margin-bottom: 50px;">
-          <p>欢迎使用逐日企信通节日礼品领取记录查询系统，请扫描员工码进行工资查询！</p>
+        <div style="color: white; margin-bottom: 50px; text-align: center;">
+          <p>欢迎使用节日礼品领取查询工具<br>请扫描员工码进行查询！</p>
         </div>
         <van-button @click="startScan">开始查询</van-button>
     </div>
@@ -187,7 +187,7 @@ onMounted(() => {
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="list">
           <van-row class="item" v-for="item in listData" :key="item">
-            <van-cell title="中秋节 2024-9-17" value="已领取" label="荣诚月饼2盒" />
+            <van-cell :title="item.goodsName" value="已领取" :label="item.remark" />
           </van-row>
         </van-list>
       </van-pull-refresh>
