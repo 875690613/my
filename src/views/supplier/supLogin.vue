@@ -48,7 +48,7 @@ onMounted(() => {
 <template>
   <van-nav-bar title="登录" fixed :border="false" />
   <main>
-    <div class="login-title">系列查询工具</div>
+    <div class="login-title">供应商地图</div>
     <van-form @submit="onSubmit">
         <van-cell-group inset>
             <van-field
