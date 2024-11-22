@@ -22,7 +22,7 @@
         </van-popup>
         <main class="scrollMain">
             <div class="search-inp">
-                <input type="text" v-model="params.keyword" @blur="requestData()" placeholder="请输入">
+                <input type="text" v-model="params.keyword" @keyup="seaData" placeholder="请输入">
             </div>
             <div class="map-sec">
                 <baidu-map class="map" @ready="mapReady" ak="9gESWUQzODCzaVsK3oo6CohG8RGI91xo" v="3.0" type="API"
@@ -96,7 +96,7 @@ export default {
             finished: false,
             loading: false,
             konked: false,
-            currentId: ''
+            currentId: '',
             
         });
         const mapObj = ref(null);
@@ -107,6 +107,7 @@ export default {
 
         // 请求接口获取数据
         const getData = async () => {
+
             pageData.params.page++;
             const { code, rows, total } = await api.clientAddresses(pageData.params);
 
@@ -212,6 +213,7 @@ export default {
             pageData.finished = false;
             pageData.params.page = 0;
             pageData.listData.length = 0;
+            pageData.showCenter = false;
             getData();
         }
 
@@ -230,6 +232,12 @@ export default {
             pageData.currentId = item.Id;
             local.search(item.Address);
         }
+
+        const seaData = event => {
+            if (event.keyCode === 13 || event.key === 'Enter') {
+                requestData();
+            }
+        }
         return {
             ...toRefs(pageData),
             go,
@@ -243,7 +251,8 @@ export default {
             onRefresh,
             requestData,
             resetData,
-            positionShow
+            positionShow,
+            seaData
         }
     }
 }
