@@ -40,6 +40,16 @@ const router = createRouter({
           component: () => import('../views/welfare/gifts.vue')
         },
         {
+          path: 'staffPhysicalExam',
+          name: 'staffPhysicalExam',
+          component: () => import('../views/staffPhysicalExam/staffPhysicalExam.vue')
+        },
+        {
+          path: '/staffPhysicalExam/apply',
+          name: 'staffPhysicalExamApply',
+          component: () => import('../views/staffPhysicalExam/apply.vue')
+        },
+        {
           path: 'myShop',
           name: 'myShop',
           component: () => import('../views/myShop/index.vue')

@@ -78,21 +78,15 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/workorder/, '')
       },
-      '/api/auth': {
-        // target: 'http://58.215.206.250:8765/api/auth',
-        target: 'http://58.215.206.250:7776/api/auth',
+      '/api/auth/jwt/token': {
+        target: 'http://58.215.206.250:7776/api/auth/jwt/token',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/auth/, '')
+        rewrite: (path) => path.replace(/^\/api\/auth\/jwt\/token/, '')
       },
       '/api/myStyle': {
         target: 'http://58.215.206.250:8190/api/myStyle',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/myStyle/, '')
-      },
-      '/api/mystyle': {
-        target: 'http://58.215.206.250:8190/api/mystyle',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/mystyle/, '')
       },
       '/api/sys': {
         target: 'http://58.215.206.250:8190/api/sys',
@@ -103,6 +97,21 @@ export default defineConfig({
         target: 'https://welfare.zhuritec.com/api/officeSuppliesApplication',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/officeSuppliesApplication/, '')
+      },
+      // oa员工证登录接口
+      '/api/auth/jwt/staff': {
+        target: 'https://oa.zhuritec.com/api/auth/jwt/staff',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/auth\/jwt\/staff/, '')
+      },
+      // 验证当前人员是否是优秀员工
+      // 报名优秀员工体检
+      // 优秀员工体检查询列表
+      // 优秀员工体检报名详情
+      '/api/oa': {
+        target: 'https://oa.zhuritec.com/api/oa',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/oa/, '')
       }
     }
   },

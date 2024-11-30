@@ -23,4 +23,16 @@ export default {
     clientContract: (params) => request.post(`/api/myStyle/clientContract`, { ...params }),
     balance: (contractId) => request.get(`/api/myStyle/balance?contractId=${contractId}`),
     purchaseDetail: (contractId) => request.get(`/api/myStyle/purchaseDetail?contractId=${contractId}`),
+
+    // 优秀员工体检H5页面 2024-11-28
+    // 人员工号登录 ==>档案管理 staff_no
+    staffCodeLogin: (params) => request.post('/api/auth/jwt/staff/token', {...params }),
+    // 验证当前人员是否是优秀员工
+    checkIsExcellent: (params) => request.get('/api/oa/user/excellent/checkup/isExcellentPeople', { ...params }),
+    // 报名优秀员工体检
+    applyExcellentPeople: (params) => request.post('/api/oa/user/excellent/checkup/add', { ...params }),
+    // 优秀员工体检查询列表
+    excellentPeopleList: (params) => request.post('/api/oa/user/excellent/checkup/read/page', {...params }),
+    // 优秀员工体检报名详情
+    excellentPeopleDetail: (params) => request.get('/api/oa/user/excellent/checkup/read/detail', {...params }),
 }
