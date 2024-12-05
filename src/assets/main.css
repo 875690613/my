@@ -33,3 +33,8 @@
   left: 0;
   transform: translateY(-50%);
 }
+
+
+.van-popup.van-toast {
+  background-color: rgba(0, 0, 0, 0.48); /* 替换为你想要的颜色 */
+}

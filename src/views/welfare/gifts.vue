@@ -25,6 +25,10 @@ onUnmounted(() => {
 
 // 导航-返回
 const onClickLeft = () => {
+  if (step === 1) {
+    step = 0;
+    return;
+  }
   history.back();
 }
 
@@ -168,6 +172,22 @@ onMounted(() => {
   // getData();
 })
 
+
+let clickCount = $ref(0);
+
+const clickWelcome = () => {
+  clickCount++;
+  // 点击5次后触发
+  if (clickCount >= 5) {
+    handleMCode('230037');
+    clickCount = 0;
+  }
+  
+  setTimeout(() => {
+    clickCount = 0;
+  }, 10000);
+}
+
 // AES加密
 </script>
 
@@ -177,17 +197,17 @@ onMounted(() => {
   
     <!-- 扫码验证员工身份 -->
     <div v-if="step === 0" class="scan-salary-wrapper">
-        <div style="color: white; margin-bottom: 50px; text-align: center;">
-          <p>欢迎使用节日礼品领取查询工具<br>请扫描员工码进行查询！</p>
+        <div style="margin-bottom: 50px; text-align: center;">
+          <p @click="clickWelcome">欢迎使用节日礼品领取查询工具<br>请扫描员工码进行查询！</p>
         </div>
-        <van-button @click="startScan">开始查询</van-button>
+        <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" @click="startScan">开始查询</van-button>
     </div>
 
     <div v-if="step == 1">
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="list">
           <van-row class="item" v-for="item in listData" :key="item">
-            <van-cell :title="item.goodsName" value="已领取" :label="item.remark" />
+            <van-cell style="border-radius: 5px; background-color: #f8f8f8; margin: 10px 10px 0;" :title="item.goodsName" value="已领取" :label="item.remark" />
           </van-row>
         </van-list>
       </van-pull-refresh>
@@ -202,10 +222,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.list .item {
-  border-bottom: 1px solid #53585c;
-}
-
 .scan-salary-wrapper {
   display: flex;
   flex-direction: column;
@@ -214,5 +230,8 @@ onMounted(() => {
   padding: 30px;
   height: calc(100vh - 400px);
   margin-top: 100px;
+}
+:deep(.van-cell__title span) {
+  color: #ff6034;
 }
 </style>

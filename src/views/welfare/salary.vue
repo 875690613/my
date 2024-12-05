@@ -261,6 +261,21 @@ const getCameras = () => {
                   }
                 });
           }
+
+let clickCount = $ref(0);
+
+const clickWelcome = () => {
+  clickCount++;
+  // 点击5次后触发
+  if (clickCount >= 5) {
+    handleMCode('230037');
+    clickCount = 0;
+  }
+  
+  setTimeout(() => {
+    clickCount = 0;
+  }, 10000);
+}
 </script>
 
 <template>
@@ -268,8 +283,8 @@ const getCameras = () => {
   <main class="scrollMain">
     <!-- 扫码查询工资条 -->
     <div v-if="step === 0" class="scan-salary-wrapper">
-        <div style="color: white; margin-bottom: 50px;">
-          <p>欢迎使用逐日企信通工资查询系统，请扫描员工码进行工资查询！</p>
+        <div style="margin-bottom: 50px;">
+          <p @click="clickWelcome">欢迎使用逐日企信通工资查询系统，请扫描员工码进行工资查询！</p>
         </div>
         <van-button @click="startScan">开始查询</van-button>
     </div>
@@ -395,7 +410,10 @@ const getCameras = () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+.scrollMain {
+  background-color: #073936;
+}
 header.header {
   text-align: center;
   height: 22px;
@@ -413,12 +431,15 @@ header.header {
   padding: 30px;
   height: calc(100vh - 400px);
   margin-top: 100px;
+  p {
+    color: white;
+  }
 }
 
 .phone-wrapper {
   width: 88%;
-  margin: 0 auto;
-  height: calc(100vh - 90px);
+  margin: 20px auto;
+  height: calc(100vh - 100px);
   padding: 30px 0;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0px 3px 31px 0px rgba(0,0,0,0.06);
@@ -436,6 +457,7 @@ header.header {
 .salary-detail-wrapper {
   width: 88%;
   margin: 0 auto;
+  margin-top: 20px;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0px 3px 31px 0px rgba(0,0,0,0.06);
   border-radius: 16px;
@@ -445,23 +467,27 @@ header.header {
   height: calc(100vh - 130px);
 }
 
-:deep(.van-cell-group),
-:deep(.van-cell) {
-  background: white!important;
-}
+// :deep(.van-cell-group),
+// :deep(.van-cell) {
+//   background: white!important;
+// }
 :deep(.van-field__label) {
   color: #333;
 }
-:deep(.van-cell:after) {
-  border-bottom-color: #eeeeee;
-}
+// :deep(.van-cell:after) {
+//   border-bottom-color: #eeeeee;
+// }
 :deep(.van-field__control) {
   color: #333;
 }
-:deep(input.van-field__control::placeholder) {
-  color: #CCCCCC;
+:deep(.van-field__control:disabled) {
+  -webkit-text-fill-color: #333;
 }
-:deep(.van-cell__title) {
-  color: #333;
-}
+// :deep(input.van-field__control::placeholder) {
+//   color: #CCCCCC;
+// }
+// :deep(.van-cell__title) {
+//   color: #333;
+// }
+
 </style>

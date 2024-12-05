@@ -123,7 +123,7 @@ const onClickLeft = () => {
   border-bottom: 1px solid #eee;
   font-size: 12px;
   background: #e8f1f3;
-  border-radius: 16px;
+  border-radius: 10px;
 }
 
 .btn-group {

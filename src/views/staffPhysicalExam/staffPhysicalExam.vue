@@ -202,8 +202,8 @@ onMounted(() => {
     step = 1;
   } else {
     console.log('第二条路')
-    // step = 0;
-    handleMCode(230037);
+    step = 0;
+    // handleMCode(230037);
   }
 })
 
@@ -224,6 +224,22 @@ const getApplyRecord = async () => {
   }
 }
 
+
+let clickCount = $ref(0);
+
+const clickWelcome = () => {
+  clickCount++;
+  // 点击5次后触发
+  if (clickCount >= 5) {
+    handleMCode('230037');
+    clickCount = 0;
+  }
+
+  setTimeout(() => {
+    clickCount = 0;
+  }, 10000);
+}
+
 </script>
 
 <template>
@@ -232,16 +248,16 @@ const getApplyRecord = async () => {
   
     <!-- 扫码验证员工身份 -->
     <div v-if="step === 0" class="scan-salary-wrapper">
-        <div style="color: white; margin-bottom: 50px; text-align: center;">
-          <p>请扫描员工码！</p>
+        <div style="margin-bottom: 50px; text-align: center;">
+          <p @click="clickWelcome">请扫描员工码！</p>
         </div>
-        <van-button @click="startScan">开始扫描</van-button>
+        <van-button type="success" @click="startScan">开始扫描</van-button>
     </div>
 
     <div v-if="step == 1" class="step1-wrapper">
       <!-- 体检申请  -->
        <div class="apply-wrapper">
-        <van-button color="white" style="color: green;" @click="doApply" :disabled="!isExcellent">体检申请 &#62;</van-button>
+        <van-button type="success" @click="doApply" :disabled="!isExcellent">体检申请 &#62;</van-button>
        </div>
        <!-- 体检申请记录查询 -->
         <div v-if="!isExcellent" class="record-wrapper">
@@ -250,13 +266,13 @@ const getApplyRecord = async () => {
         <div v-else class="record-wrapper">
           <div class="record-title">申请记录</div>
           <div v-if="hasRecord">
-            <p>福利项目：{{ recordInfo.benefitItems }}</p>
-            <p>员工姓名：{{ recordInfo.userName }}</p>
-            <p>员工年龄：{{ recordInfo.userAge }}</p>
-            <p>优秀员工年度：{{ recordInfo.selectYear }}</p>
-            <p>体检套餐：{{ recordInfo.medicalExaminationPackageName }}</p>
-            <p>体检城市：{{ recordInfo.selectCity }}</p>
-            <p>预计体检时间：{{ recordInfo.estimatedTime }}</p>
+            <p>福利项目：{{ recordInfo?.benefitItems }}</p>
+            <p>员工姓名：{{ recordInfo?.userName }}</p>
+            <p>员工年龄：{{ recordInfo?.userAge }}</p>
+            <p>优秀员工年度：{{ recordInfo?.selectYear }}</p>
+            <p>体检套餐：{{ recordInfo?.medicalExaminationPackageName }}</p>
+            <p>体检城市：{{ recordInfo?.selectCity }}</p>
+            <p>预计体检时间：{{ recordInfo?.estimatedTime }}</p>
           </div>
           <div v-else>暂无记录</div>
         </div>
@@ -292,10 +308,9 @@ const getApplyRecord = async () => {
   justify-content: center;
   align-items: center;
   height: 40vh;
-  background: rgba(255, 255, 255, 0.3);
+  background-color: rgba(7, 193, 96, 0.2);
 }
 .record-wrapper {
-  color: white;
   font-size: 14px;
   padding: 30px;
 }
