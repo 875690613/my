@@ -38,3 +38,19 @@
 .van-popup.van-toast {
   background-color: rgba(0, 0, 0, 0.48); /* 替换为你想要的颜色 */
 }
+
+.color-red {
+  color: #f44336;
+}
+
+.color-green {  
+  color: #4caf50;
+}
+.color-orange {
+  color: #ff9800;
+}
+
+.color-blue {
+  color: #2196f3;
+}
+
