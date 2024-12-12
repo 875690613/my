@@ -12,21 +12,22 @@ let regionId = $ref()
 let colorId = $ref()
 
 let detailData = $ref(null)
-
+let id = $ref()
+id = router.currentRoute.value.query.id
 watchEffect(() => {
   orderId = router.currentRoute.value.query.id
   regionId = router.currentRoute.value.query.regionId || 0
   colorId = router.currentRoute.value.query.colorId
 })
 
-// 获取订单详情数据
+// 获取对账单详情数据
 const getData = async () => {
   loading = true;
   const params = {
     id: orderId,
     colorId
   }
-  const { code, rows, msg } = await request.get('/api/myStyle/myStyleDetail', params);
+  const { code, rows, msg } = await request.get('/api/myStyle/balanceInfo?accountStatementId='+ id);
   if (code === 200) {
     detailData = rows
   }
@@ -47,36 +48,36 @@ onMounted(() => {
     <template v-else-if="detailData">
       <van-row class="order-info">
         <van-col span="24">
-          对账单号：xxxx
+          对账单号：{{ detailData.accountStatementNo }}
         </van-col>
         <van-col span="12">
-          对账期间：2024/11
+          对账期间：{{ detailData.accountPeriod }}
         </van-col>
         <van-col span="12">
-          对账状态：对账中
+          对账状态：{{ detailData.status }}
         </van-col>
         <van-col span="12">
-          对账金额：xxxxx
+          对账金额：{{ detailData.balanceAmount }}
         </van-col>
         <van-col span="12">
-          对账人员：xxxx
+          对账人员：{{ detailData.balanceUser }}
         </van-col>
         <van-col span="12">
-          开始时间：xxx
+          开始时间：{{ detailData.startDate || '--' }}
         </van-col>
         <van-col span="12">
-          结束时间：xxx
+          结束时间：{{ detailData.endDate || '--' }}
         </van-col>
       </van-row>
       <van-row class="operators">
         <van-col span="24">
-          <van-button plain hairline type="primary" :to="'detailDetail?id=0'">对账明细</van-button>
+          <van-button plain hairline type="primary" :to="'detailDetail?type=0&id=' + id">对账明细</van-button>
         </van-col>
         <van-col span="24">
-          <van-button plain hairline type="primary" :to="'detailDetail?id=1'">对账凭证</van-button>
+          <van-button plain hairline type="primary" :to="'detailDetail?type=1&id=' + id">对账凭证</van-button>
         </van-col>
         <van-col span="24">
-          <van-button plain hairline type="primary" :to="'detailDetail?id=2'">发票查询</van-button>
+          <van-button plain hairline type="primary" :to="'detailDetail?type=2&id=' + id">发票查询</van-button>
         </van-col>
       </van-row>
     </template>

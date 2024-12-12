@@ -15,6 +15,10 @@ let showBrand = $ref(false);
 let showRegion = $ref(false);
 let brandOptions = $ref([]);
 let regionOptions = $ref([]);
+let balanceDetail = $ref({});//供应商详情
+let id = $ref()
+id = router.currentRoute.value.query.id
+
 const brandFieldNames = {
   text: 'name',
   value: 'id',
@@ -30,7 +34,8 @@ let refreshing = $ref(false);
 
 const onLoad = () => {
   console.log('onLoad...')
-  queryParams.page++;
+  // queryParams.page++;
+  getBalanceDetails()
   getData();
 }
 
@@ -72,7 +77,8 @@ const onConfirmRegion = (item) => {
   showRegion = false;
 };
 const goOrderDetail = (item) => {
-  router.push({ name: "supplierReconcileDetail", query: { id: item.Id, regionId: item.RegionId, colorId: item.ColorId } });
+  console.log("对账单明细：",item);
+  router.push({ name: "supplierReconcileDetail", query: { id: item.id} });
 };
 
 let showTop = $ref(false);
@@ -111,7 +117,8 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/myStyleList', params);
+  params.clientId = id
+  const { code, rows, total } = await request.post('/api/myStyle/balanceList', params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -154,6 +161,19 @@ const getRegionOptions = async () => {
     showToast("获取片区选项数据失败");
   }
 };
+// 获取详情数据
+const getBalanceDetails = async () => {
+  const {code, rows} = await request.get('/api/myStyle/clientBalanceDetail?clientId='+id );
+  if (code == 200) {
+    // 处理片区选项数据
+    // 处理完成后赋值给regionOptions
+    // 赋值后，页面会自动更新
+    balanceDetail = rows;
+  } else {
+    // 获取片区选项数据失败提示
+    showToast("获取片区选项数据失败");
+  }
+};
 
 // 搜索重置
 const reset = () => {
@@ -179,19 +199,19 @@ const reset = () => {
   </van-nav-bar>
   <van-row class="top-info">
     <van-col span="24">
-      供应商名称：宜兴市华威纺织有限公司
+      供应商名称：{{ balanceDetail.name }}
     </van-col>
     <van-col span="24">
-      供应商类型：面料商
+      供应商类型：{{ balanceDetail.supplierType }}
     </van-col>
     <van-col span="24">
-      通讯地址：广东省广州市广州市海珠区中大新长江轻纺城城南区二楼三街S2124档
+      通讯地址：{{ balanceDetail.address }}
     </van-col>
     <van-col span="12">
-      供应商账期：30天
+      供应商账期：{{ balanceDetail.accountDay || '--' }}
     </van-col>
     <van-col span="12">
-      上期余额：xxxxx
+      上期余额：{{ balanceDetail.lastBalance }}
     </van-col>
   </van-row>
   <van-divider />
@@ -201,19 +221,19 @@ const reset = () => {
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)">
         <van-col span="24" style="font-size: 16px;">
-          对账单号：xxxx
+          对账单号：{{item.accountStatementNo}}
         </van-col>
         <van-col span="12">
-          对账期间：2024/12
+          对账期间：{{item.accountPeriod}}
         </van-col>
         <van-col span="12">
-          对账状态：对账中
+          对账状态：{{item.status}}
         </van-col>
         <van-col span="12">
-          对账金额：xxxx
+          对账金额：{{item.balanceAmount}}
         </van-col>
         <van-col span="12">
-          对账人员：xxx
+          对账人员：{{item.balanceUser}}
         </van-col>
       </van-row>
     </van-list>

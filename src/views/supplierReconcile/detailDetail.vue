@@ -11,9 +11,12 @@ const router = useRouter();
 document.title = '供应商对账';
 let pageIndex = $ref(0);
 let title = ['对账单明细', '对账单凭证', '对账单发票']
-
+let id = $ref()
+id = router.currentRoute.value.query.id
+console.log("id:",id);
+let detailData = $ref(null)
 watchEffect(() => {
-  pageIndex = router.currentRoute.value.query.id;
+  pageIndex = router.currentRoute.value.query.type;
 })
 
 let listData = $ref([]);
@@ -34,12 +37,16 @@ let loading = $ref(false);
 let finished = $ref(false);
 let refreshing = $ref(false);
 
-const onLoad = () => {
-  console.log('onLoad...')
-  queryParams.page++;
+// const onLoad = () => {
+//   console.log('onLoad...')
+//   queryParams.page++;
+//   getDetailData()
+//   getData();
+// }
+onMounted(() => {
+  getDetailData()
   getData();
-}
-
+})
 const onRefresh = () => {
   console.log('onRefresh...')
   listData = [];
@@ -117,7 +124,17 @@ onMounted(() => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/myStyleList', params);
+  let url = '/api/myStyle/balanceDetail';
+  if (pageIndex == 0) {
+    url = '/api/myStyle/balanceDetail'
+  }else if (pageIndex == 1) {
+    url = '/api/myStyle/balanceVoucher'
+  }else{
+    url = '/api/myStyle/invoiceQuery'
+  }
+
+  params.accountStatementId = id
+  const { code, rows, total } = await request.post(url, params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -160,6 +177,20 @@ const getRegionOptions = async () => {
     showToast("获取片区选项数据失败");
   }
 };
+// 获取对账单详情数据
+const getDetailData = async () => {
+  loading = true;
+  // const params = {
+  //   id: orderId,
+  //   colorId
+  // }
+  const { code, rows, msg } = await request.get('/api/myStyle/balanceInfo?accountStatementId='+ id);
+  if (code === 200) {
+    detailData = rows
+    console.log("获取对账单详情数据rows:",rows);
+  }
+  loading = false;
+}
 
 // 搜索重置
 const reset = () => {
@@ -183,27 +214,27 @@ const reset = () => {
 <template>
   <van-nav-bar :title="title[pageIndex]" fixed :border="false" left-arrow left-text="返回" @click-left="router.back()">
   </van-nav-bar>
-  <van-row class="top-info">
+  <van-row class="top-info" v-if="detailData">
     <van-col span="24">
-      对账单号：dzd20241200001
+      对账单号：{{ detailData.accountStatementNo }}
     </van-col>
     <van-col span="12">
-      对账期间：2024/11
+      对账期间：{{ detailData.accountPeriod }}
     </van-col>
     <van-col span="12">
-      对账状态：对账中
+      对账状态：{{ detailData.status }}
     </van-col>
     <van-col span="12">
-      对账金额：xxxxxx
+      对账金额：{{ detailData.balanceAmount }}
     </van-col>
     <van-col span="12">
-      对账人员：XXX
+      对账人员：{{ detailData.balanceUser }}
     </van-col>
     <van-col span="12">
-      开始时间：2024/11/02
+      开始时间：{{ detailData.startDate || '--' }}
     </van-col>
     <van-col span="12">
-      结束时间：2024/11/20
+      结束时间：{{ detailData.endDate || '--' }}
     </van-col>
   </van-row>
   <van-divider />
@@ -213,54 +244,54 @@ const reset = () => {
     <van-list v-if="pageIndex == 0" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)">
         <van-col span="24" style="font-size: 16px;">
-          合同号：524110111
+          合同号：{{ item.ContractNo }}
         </van-col>
         <van-col span="12">
-          合同日期：2024/11/02
+          合同日期：{{ item.ContractDate }}
         </van-col>
         <van-col span="12">
-          采购类型：面料
+          采购类型：{{ item.OriginalType }}
         </van-col>
         <van-col span="12">
-          物料编号：sup1203-58
+          物料编号：{{ item.StockNo }}
         </van-col>
         <van-col span="12">
-          合同数量：100
+          合同数量：{{ item.ContractNumbers }}
         </van-col>
         <van-col span="12">
-          结算数量：100
+          结算数量：{{ item.BalanceNumbers }}
         </van-col>
         <van-col span="12">
-          结算金额：500
+          结算金额：{{ item.BalanceAmount }}
         </van-col>
       </van-row>
     </van-list>
     <van-list v-if="pageIndex == 1" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)">
         <van-col span="24" style="font-size: 16px;">
-          凭证名称：采购订单
+          凭证名称：{{ item.FileName }}
         </van-col>
         <van-col span="12">
-          上传日期：2024/11/10
+          上传日期：{{ item.UploadTime }}
         </van-col>
         <van-col span="12">
-          上传人：XXX
+          上传人：{{ item.UploadUser }}
         </van-col>
       </van-row>
     </van-list>
     <van-list v-if="pageIndex == 2" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)">
         <van-col span="24" style="font-size: 16px;">
-          发票编号：2432123133432424
+          发票编号：{{ item.InvoiceNo }}
         </van-col>
         <van-col span="12">
-          发票类型：增值税电子专票
+          发票类型：{{ item.InvoiceType }}
         </van-col>
         <van-col span="12">
-          开票日期：2024/11/25
+          开票日期：{{ item.InvoiceDate }}
         </van-col>
         <van-col span="12">
-          开票金额：XXX
+          开票金额：{{ item.TotalAmount }}
         </van-col>
       </van-row>
     </van-list>

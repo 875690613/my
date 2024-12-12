@@ -29,6 +29,7 @@ let supplierTypeOptions = $ref([
   }
 ]);
 let regionOptions = $ref([]);
+let balanceOrOverdue = $ref({});
 const brandFieldNames = {
   text: 'name',
   value: 'id',
@@ -41,12 +42,13 @@ const regionFieldNames = {
 let loading = $ref(false);
 let finished = $ref(false);
 let refreshing = $ref(false);
-let supplierType = $ref('面料商');
+let stockType = $ref('面料商');
 
 const onLoad = () => {
   console.log('onLoad...')
   queryParams.page++;
   getData();
+  getBalanceOrOverdue()
 }
 
 const onRefresh = () => {
@@ -59,7 +61,7 @@ const onRefresh = () => {
 const queryParams = reactive({
   page: 1,
   limit: 10,
-  supplierType: 1,
+  stockType: '面料商',
   regionId: null,
   beginDate: null,
   endDate: null,
@@ -67,10 +69,10 @@ const queryParams = reactive({
 });
 
 const onConfirmBrand = (item) => {
-  console.log(item);
+  console.log('选中的值：',item);
   const {selectedOptions} = item;
   const selectedItem = selectedOptions?.[0];
-  queryParams.supplierType = selectedItem?.id;
+  queryParams.stockType = selectedItem?.name;
   showSupplierType = false;
 };
 const onConfirmRegion = (item) => {
@@ -114,13 +116,14 @@ const onSubmit = (values) => {
 
 onMounted(() => {
   getRegionOptions();
+ 
 });
 
 // 请求接口获取数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/myStyleList', params);
+  const { code, rows, total } = await request.post('/api/myStyle/clientBalanceList', params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -142,12 +145,42 @@ const getRegionOptions = async () => {
     // 处理完成后赋值给regionOptions
     // 赋值后，页面会自动更新
     regionOptions = rows;
-    showTopIcon = true;
+    // showTopIcon = true;
   } else {
     // 获取片区选项数据失败提示
     showToast("获取片区选项数据失败");
   }
 };
+// 获取本期已对账、未对账、已逾期数据
+const getBalanceOrOverdue = async () => {
+  let rowsObj = [
+      {
+        "balanced": 28,
+        "unbalanced": 57,
+        "overdued": 25
+      }
+    ]
+    balanceOrOverdue = rowsObj[0];
+    console.log("balanceOrOverdue:",rowsObj,balanceOrOverdue);
+  const {code, rows} = await request.get('/api/MyStyle/balanceOrOverdue',{});
+  // if (code !== 200) {
+  //   // 处理完成后赋值给regionOptions
+  //   // 赋值后，页面会自动更新
+  //   let rows1 = [
+  //     {
+  //       "balanced": 28,
+  //       "unbalanced": 57,
+  //       "overdued": 25
+  //     }
+  //   ]
+  //   balanceOrOverdue = rows1;
+  //   console.log("balanceOrOverdue:",balanceOrOverdue);
+  // } else {
+  //   // 获取片区选项数据失败提示
+  //   showToast("获取片区选项数据失败");
+  // }
+};
+
 
 </script>
 
@@ -159,19 +192,19 @@ const getRegionOptions = async () => {
         <van-col span="8">
           <div class="top-data completed">
             <div class="top-data__label">本期已对账</div>
-            <div class="top-data__value color-green">20</div>
+            <div class="top-data__value color-green">{{ balanceOrOverdue.balanced }}</div>
           </div>
         </van-col>
         <van-col span="8">
           <div class="top-data uncompleted">
             <div class="top-data__label">本期未对账</div>
-            <div class="top-data__value color-orange">8</div>
+            <div class="top-data__value color-orange">{{ balanceOrOverdue.unbalanced }}</div>
           </div>
         </van-col>
         <van-col span="8">
           <div class="top-data overdue">
             <div class="top-data__label">已逾期</div>
-            <div class="top-data__value color-red">4</div>
+            <div class="top-data__value color-red">{{ balanceOrOverdue.overdued }}</div>
           </div>
         </van-col>
       </van-row>
@@ -179,11 +212,11 @@ const getRegionOptions = async () => {
     <van-row class="top-filter">
       <van-col span="8" style="padding-right: 3px;">
         <van-field
-  v-model="supplierType"
+  v-model="stockType"
   class="field-select"
   is-link
   readonly
-  name="supplierType"
+  name="name"
   placeholder="点击选择供应商类型"
   @click="showSupplierType = true"
 />
@@ -196,7 +229,7 @@ const getRegionOptions = async () => {
           class="name-field"
         >
         <template #button>
-          <van-button size="mini" type="primary" icon="search">查询</van-button>
+          <van-button size="mini" type="primary" icon="search" @click="onSubmit()">查询</van-button>
         </template>
       </van-field>
       </van-col>
@@ -209,16 +242,16 @@ const getRegionOptions = async () => {
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="(item, index) in listData" :key="item.Id" @click="goOrderDetail(item)">
         <van-col span="12" style="font-size: 16px;">
-          华威纺织
+          {{ item.Name }}
         </van-col>
         <van-col span="12" style="text-align: right; color: #999;">
-          [广东省广州市]
+          {{ item.City }}
         </van-col>
         <van-col span="12">
-          余额：xxxxxxxx
+          余额：{{ item.BalanceAmount }}
         </van-col>
         <van-col span="12" style="text-align: right;">
-          计划对账日期：2024/12/20
+          计划对账日期：{{ item.PlanBalanceDate }}
         </van-col>
       </van-row>
     </van-list>
