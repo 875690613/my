@@ -3,8 +3,8 @@ import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { showToast } from 'vant';
 import { onMounted } from 'vue';
-let phone = $ref('17501516805');
-let pwd = $ref('123456');
+let phone = $ref(''); // 17501516805
+let pwd = $ref(''); // 123456
 let toast = $ref(null)
 
 document.title = '供应商对账';
@@ -15,12 +15,12 @@ const onSubmit = async (values) => {
     message: '加载中...',
     forbidClick: true,
   });
-  const { code, rows, msg } = await request.get('/api/sys/loginIn', values);
+  const { code, rows, message } = await request.get('/api/sys/loginIn', values);
   toast.close();
   if (code == 200) {
     // Toast登录成功提示
     showToast({
-      message: msg,
+      message: message,
       className: 'custom-toast',
     })
     
@@ -32,7 +32,7 @@ const onSubmit = async (values) => {
     
   } else {
     showToast({
-      message: msg,
+      message: message,
       className: 'custom-toast',
     })
   }

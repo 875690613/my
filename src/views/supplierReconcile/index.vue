@@ -62,9 +62,6 @@ const queryParams = reactive({
   page: 1,
   limit: 10,
   stockType: '面料商',
-  regionId: null,
-  beginDate: null,
-  endDate: null,
   keyword: null
 });
 
@@ -73,6 +70,12 @@ const onConfirmBrand = (item) => {
   const {selectedOptions} = item;
   const selectedItem = selectedOptions?.[0];
   queryParams.stockType = selectedItem?.name;
+  stockType = selectedItem?.name;
+  queryParams.page = 1;
+
+  // 清空数据
+  listData = []
+  getData();
   showSupplierType = false;
 };
 const onConfirmRegion = (item) => {
@@ -87,7 +90,6 @@ const goOrderDetail = (item) => {
   router.push({ name: "supplierReconcileList", query: { id: item.Id, regionId: item.RegionId, colorId: item.ColorId } });
 };
 
-let showTop = $ref(false);
 let showStartTimePicker = $ref(false);
 let showEndTimePicker = $ref(false);
 
@@ -111,7 +113,6 @@ const onSubmit = (values) => {
   // 清空数据
   listData = []
   getData();
-  showTop = false;
 };
 
 onMounted(() => {
@@ -266,20 +267,6 @@ const getBalanceOrOverdue = async () => {
     @cancel="showSupplierType = false"
   />
 </van-popup>
-<van-popup v-model:show="showRegion" position="bottom">
-  <van-picker
-    :columns="regionOptions"
-    :columns-field-names="regionFieldNames"
-    @confirm="onConfirmRegion"
-    @cancel="showRegion = false"
-  />
-  </van-popup>
-  <van-popup v-model:show="showStartTimePicker" position="bottom">
-    <van-date-picker @confirm="onStartTimeConfirm" @cancel="showStartTimePicker = false" />
-  </van-popup>
-  <van-popup v-model:show="showEndTimePicker" position="bottom">
-    <van-date-picker @confirm="onEndTimeConfirm" @cancel="showEndTimePicker = false" />
-  </van-popup>
 </template>
 
 <style scoped lang="scss">
