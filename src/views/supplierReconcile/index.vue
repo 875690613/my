@@ -160,11 +160,9 @@ const getRegionOptions = async () => {
 };
 // 获取本期已对账、未对账、已逾期数据
 const getBalanceOrOverdue = async () => {
-  const {code, rows} = await request.get('/api/MyStyle/balanceOrOverdue');
+  const {code, rows} = await request.get('/api/myStyle/balanceOrOverdue');
   if (code == 200) {
     // 处理完成后赋值给regionOptions
-    // 赋值后，页面会自动更新
-    
     balanceOrOverdue = rows;
     console.log("balanceOrOverdue:",balanceOrOverdue);
   } else {
