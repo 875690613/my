@@ -3,6 +3,7 @@ import { onMounted, reactive, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import request from '@/utils/request';
 import {removeEmptyProps} from '@/utils/common';
+import dayjs from 'dayjs';
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
@@ -140,6 +141,12 @@ const getData = async () => {
     finished = rows.length < queryParams.limit;
     // 合并数据
     listData = listData.concat(rows);
+    listData = listData.map(item => {
+      return {
+        ...item,
+        ContractDate:dayjs(item.ContractDate).format('YYYY-MM-DD')
+      }
+    })
   } else {
     // 获取数据失败提示
     showToast("获取数据失败");

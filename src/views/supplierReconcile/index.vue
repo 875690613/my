@@ -160,7 +160,7 @@ const getRegionOptions = async () => {
 };
 // 获取本期已对账、未对账、已逾期数据
 const getBalanceOrOverdue = async () => {
-  const {code, rows} = await request.get('/api/MyStyle/balanceOrOverdue',{});
+  const {code, rows} = await request.get('/api/MyStyle/balanceOrOverdue');
   if (code == 200) {
     // 处理完成后赋值给regionOptions
     // 赋值后，页面会自动更新
@@ -240,7 +240,7 @@ const getBalanceOrOverdue = async () => {
           {{ item.City }}
         </van-col>
         <van-col span="12">
-          余额：{{ item.BalanceAmount }}
+          余额：{{ item.BalanceAmount || 0 }}
         </van-col>
         <van-col span="12" style="text-align: right;">
           计划对账日期：{{ item.PlanBalanceDate }}
