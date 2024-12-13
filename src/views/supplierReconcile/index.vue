@@ -29,7 +29,13 @@ let supplierTypeOptions = $ref([
   }
 ]);
 let regionOptions = $ref([]);
-let balanceOrOverdue = $ref({});
+let balanceOrOverdue = $ref(
+{
+        balanced: 0,
+        unbalanced: 0,
+        overdued: 0
+      }
+);
 const brandFieldNames = {
   text: 'name',
   value: 'id',
@@ -154,32 +160,17 @@ const getRegionOptions = async () => {
 };
 // 获取本期已对账、未对账、已逾期数据
 const getBalanceOrOverdue = async () => {
-  let rowsObj = [
-      {
-        "balanced": 28,
-        "unbalanced": 57,
-        "overdued": 25
-      }
-    ]
-    balanceOrOverdue = rowsObj[0];
-    console.log("balanceOrOverdue:",rowsObj,balanceOrOverdue);
   const {code, rows} = await request.get('/api/MyStyle/balanceOrOverdue',{});
-  // if (code !== 200) {
-  //   // 处理完成后赋值给regionOptions
-  //   // 赋值后，页面会自动更新
-  //   let rows1 = [
-  //     {
-  //       "balanced": 28,
-  //       "unbalanced": 57,
-  //       "overdued": 25
-  //     }
-  //   ]
-  //   balanceOrOverdue = rows1;
-  //   console.log("balanceOrOverdue:",balanceOrOverdue);
-  // } else {
-  //   // 获取片区选项数据失败提示
-  //   showToast("获取片区选项数据失败");
-  // }
+  if (code == 200) {
+    // 处理完成后赋值给regionOptions
+    // 赋值后，页面会自动更新
+    
+    balanceOrOverdue = rows;
+    console.log("balanceOrOverdue:",balanceOrOverdue);
+  } else {
+    // 获取片区选项数据失败提示
+    showToast("获取本期对账数据失败");
+  }
 };
 
 
@@ -189,7 +180,7 @@ const getBalanceOrOverdue = async () => {
   <van-nav-bar left-arrow left-text="返回"  @click-left="router.back()" title="供应商对账" fixed :border="false"></van-nav-bar>
   <div class="top-data-group">
     <div class="top-data-group__top">
-      <van-row>
+      <van-row v-if="balanceOrOverdue">
         <van-col span="8">
           <div class="top-data completed">
             <div class="top-data__label">本期已对账</div>
