@@ -249,7 +249,7 @@ const reset = () => {
     <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
   <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
     <van-list v-if="pageIndex == 0" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goOrderDetail(item)">
+      <van-row class="order-list-item" v-for="item in listData" :key="item.Id">
         <van-col span="24" style="font-size: 16px;">
           合同号：{{ item.ContractNo }}
         </van-col>
