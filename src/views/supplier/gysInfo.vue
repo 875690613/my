@@ -114,8 +114,8 @@ export default {
         record.value = result.rows
     }
 
-    const goInfo = (id) => {
-        router.push({ path: "gysOrderInfo", query: { contractId: id} });
+    const goInfo = (item) => {
+        router.push({ path: "gysOrderInfo", query: { contractId: item.ContractId, code: item.ContractNo } });
     }
 
     const onClickLeft = () => {
@@ -222,7 +222,7 @@ export default {
                         @load="onLoad1"
                     >
                         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-                        <div style="display: flex;align-items: center;justify-content: space-between;height: 70px;border-bottom: 1px solid #E5E5E5;margin: 0 10px;padding: 0 10px;" v-for="(item, index) in list1" :key="index" @click="goInfo(item.ContractId)">
+                        <div style="display: flex;align-items: center;justify-content: space-between;height: 70px;border-bottom: 1px solid #E5E5E5;margin: 0 10px;padding: 0 10px;" v-for="(item, index) in list1" :key="index" @click="goInfo(item)">
                             <div style="color: #000;">{{ item.ContractNo }}</div>
                             <div style="display: flex;align-items: center;">
                                 <div style="margin-right: 5px;">

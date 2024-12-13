@@ -10,6 +10,9 @@ export default {
     const router = useRouter();
     const dzInfo = ref({});
     const dzList = ref([]);
+    const titleCode = ref('');
+
+    titleCode.value = route.query.code
 
     const getBalance = () => {
         api.balance(route.query.contractId).then(res => {
@@ -33,7 +36,8 @@ export default {
     return {
         onClickLeft,
         dzInfo,
-        dzList
+        dzList,
+        titleCode
     };
   },
 };
@@ -49,7 +53,7 @@ export default {
             left-arrow
             @click-left="onClickLeft"
         />
-        <div style="height: 40px;line-height: 40px;text-align: center;border-top: 1px solid #E5E5E5;border-bottom: 1px solid #E5E5E5;margin-bottom: 30px;color: #6C6C6C;">合同号：3241111001</div>
+        <div style="height: 40px;line-height: 40px;text-align: center;border-top: 1px solid #E5E5E5;border-bottom: 1px solid #E5E5E5;margin-bottom: 30px;color: #6C6C6C;">合同号：{{ titleCode }}</div>
         <div style="display: flex;align-items: center;margin-bottom: 30px;padding: 0 20px;">
             <div style="display: flex;align-items: center;width: 50%;">
                 <div style="color: #6C6C6C;flex-shrink: 0;">对账状态：</div>
