@@ -98,6 +98,30 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/officeSuppliesApplication/, '')
       },
+      // 我的集团oa员工发送验证码，用于系统登录
+      '/api/admin': {
+        target: 'http://172.16.2.227:7776/api/admin',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/admin/, '')
+      },
+      // 我的集团oa员工手机号+验证码，用于系统登录
+      '/api/auth/jwt/phone/byCode': {
+        target: 'http://172.16.2.227:7776/api/auth/jwt/phone/byCode',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/auth\/jwt\/phone\/byCode/, '')
+      },
+      // 我的集团--获取头像
+      '/api/baseFile': {
+        target: 'http://172.16.2.227:7776/api/baseFile',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/baseFile/, '')
+      },
+      // 我的集团
+      '/api/oa/user/apply/card': {
+        target: 'http://172.16.2.227:7776/api/oa/user/apply/card',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/oa\/user\/apply\/card/, '')
+      },
       // oa员工证登录接口
       '/api/auth/jwt/staff': {
         target: 'https://oa.zhuritec.com/api/auth/jwt/staff',
