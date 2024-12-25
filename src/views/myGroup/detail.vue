@@ -23,13 +23,17 @@ watchEffect(() => {
 // 获取对账单详情数据
 const getData = async () => {
   loading = true;
-  const params = {
-    id: orderId,
-    colorId
+  const params = {}
+  const { code, data, msg } = await request.get('/api/oa/sysExternalOrg/read/infoByOrgId/'+ id,params,
+  {
+    headers: {
+      Authorization: sessionStorage.getItem('myToken')
+    }
   }
-  const { code, rows, msg } = await request.get('/api/myStyle/balanceInfo?accountStatementId='+ id);
-  if (code === 200) {
-    detailData = rows
+);
+  if (code == 200) {
+    detailData = data
+    console.log("detailData:",detailData);
   }
   loading = false;
 }
@@ -47,29 +51,22 @@ onMounted(() => {
     </div>
     <template v-else-if="detailData">
       <div class="top-data-group__top">
-        江阴嘉祥贸易有限公司
+        {{ detailData.companyName }}
       </div>
       <van-row class="order-info">
         <van-col span="24">
-          对账单号：{{ detailData.accountStatementNo }}
+          公司类型：
+          <!-- 如果detailData.companyType等于1 表示无限责任公司，等于2 表示有限责任公司，等于3 表示两合公司，等于4 表示股份有限公司，等于5 表示股份两合公司 -->
+           {{ detailData.companyType == 1 ? '无限责任公司' : detailData.companyType == 2 ? '有限责任公司' : detailData.companyType == 3 ? '两合公司' : detailData.companyType == 4 ? '股份有限公司' : detailData.companyType == 5 ? '股份两合公司' : '--' }}
         </van-col>
-        <van-col span="12">
-          对账期间：{{ detailData.accountPeriod }}
+        <van-col span="24">
+          经营范围：{{ detailData.businessScope || '--' }}
         </van-col>
-        <van-col span="12">
-          对账状态：{{ detailData.status }}
+        <van-col span="24">
+          成立日期：{{ detailData.establishedDate || '--' }}
         </van-col>
-        <van-col span="12">
-          对账金额：{{ detailData.balanceAmount }}
-        </van-col>
-        <van-col span="12">
-          对账人员：{{ detailData.balanceUser }}
-        </van-col>
-        <van-col span="12">
-          开始时间：{{ detailData.startDate || '--' }}
-        </van-col>
-        <van-col span="12">
-          结束时间：{{ detailData.endDate || '--' }}
+        <van-col span="24">
+          公司地址：{{ detailData.companyAddress || '--' }}
         </van-col>
       </van-row>
       

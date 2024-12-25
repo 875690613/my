@@ -13,9 +13,11 @@ let statusType = $ref()
 let userInfo = $ref({});
 let photoFile = $ref('');
 let upLoadPhoto = $ref('');
+let orgId = $ref('');
 const fileList = $ref([]);
 const photos = $ref([]);
 const files = $ref();
+const phone = $ref(sessionStorage.getItem('userPhone') || '',);
 const uploadfileData = $ref(
   {
     hashcode: [] // 文件生成的hashcode
@@ -35,11 +37,11 @@ const onRefresh = () => {
 }
 
 const queryParams = reactive({
-  phone: sessionStorage.getItem('userPhone') || '',
+  phone: phone
 });
 
-const goOrderDetail = (id) => {
-  router.push({ name: "myGroupDetail", query: { id: id, } });
+const goOrderDetail = (orgId) => {
+  router.push({ name: "myGroupDetail", query: { id: orgId, } });
 };
 
 onMounted(() => {
@@ -60,6 +62,7 @@ const getData = async () => {
     // 计算finished
     // finished = rows.length < queryParams.limit;
     // 合并数据
+    orgId = data.orgId
     userInfo = data
     //如果有照片id就获取照片，说明申请通过了
     if (userInfo.photoId) {
@@ -96,7 +99,6 @@ const getPhotoFile = async () => {
     }
   });
   photoFile ='data:image/jpeg;base64,'+ res;
-  console.log("imgurl:",imgurl,fileList);
 };
 // 上传头像前处理
 const beforeRead = (file) => {
@@ -200,7 +202,7 @@ const applyCard = async () => {
 <template>
   <van-nav-bar left-arrow left-text="返回"  @click-left="router.back()" title="申请员工证" fixed :border="false"></van-nav-bar>
     <div class="top-data-group">
-      <div class="top-data-group__top" @click="goOrderDetail(1)">
+      <div class="top-data-group__top" @click="goOrderDetail(orgId)">
         {{ userInfo.orgName }}
       </div>
       <div style="display: flex; justify-content: space-around;">
