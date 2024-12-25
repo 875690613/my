@@ -203,7 +203,7 @@ const applyCard = async () => {
   <van-nav-bar left-arrow left-text="返回"  @click-left="router.back()" title="申请员工证" fixed :border="false"></van-nav-bar>
     <div class="top-data-group">
       <div class="top-data-group__top" @click="goOrderDetail(orgId)">
-        {{ userInfo.orgName }}
+        {{ userInfo.orgName }}<span style="color: #1989fa; margin-left: 3px;"><van-icon name="arrow-double-right" /></span>
       </div>
       <div style="display: flex; justify-content: space-around;">
 
