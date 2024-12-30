@@ -13,6 +13,7 @@
     "@vant/area-data": "^2.0.0",
     "axios": "^1.7.7",
     "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.13",
     "html5-qrcode": "^2.3.8",
     "pinia": "^2.1.7",
     "sass": "^1.69.5",
