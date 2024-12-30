@@ -118,7 +118,7 @@ const onSubmit = async (values) => {
   <div class="mainContent">
     <van-nav-bar title="登录" fixed :border="false" />
     <main>
-      <div class="login-title">我的集团</div>
+      <div class="login-title"></div>
       <van-form @submit="onSubmit">
           <van-cell-group inset>
               <van-field
@@ -177,7 +177,7 @@ const onSubmit = async (values) => {
   color: #666666;
   text-align: center;
   margin: 16px;
-  padding: 120px 20px 50px 20px;
+  padding: 40px 20px 60px 20px;
 
 }
 .van-count-down {

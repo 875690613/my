@@ -122,6 +122,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/oa\/user\/apply\/card/, '')
       },
+      // 我的集团--获取员工信息二维码
+      '/api/oa/personnelArchives': {
+        target: 'http://58.215.206.250:7776/api/oa/personnelArchives',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/oa\/personnelArchives/, '')
+      },
       // 我的集团--获取公司信息
       '/api/oa/sysExternalOrg/read/': {
         target: 'http://58.215.206.250:7776/api/oa/sysExternalOrg/read',

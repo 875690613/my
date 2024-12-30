@@ -12,6 +12,7 @@ let loading = $ref(false)
 let statusType = $ref()
 let userInfo = $ref({});
 let photoFile = $ref('');
+let qrcode = $ref('');//二维码
 let upLoadPhoto = $ref('');
 let orgId = $ref('');
 const fileList = $ref([]);
@@ -23,6 +24,8 @@ const uploadfileData = $ref(
     hashcode: [] // 文件生成的hashcode
   }
 );
+let show = $ref(false);
+
 
 const onLoad = () => {
   console.log('onLoad...')
@@ -99,6 +102,24 @@ const getPhotoFile = async () => {
     }
   });
   photoFile ='data:image/jpeg;base64,'+ res;
+};
+const showPopup = () => {
+  show = true;
+};
+// 获取员工二维码
+const getQrcode = async () => {
+  // const params = removeEmptyProps(userInfo);
+  const params = {
+    // photoFileId: userInfo.photoId
+  }
+  const data = await request.get('/api/oa/personnelArchives/qrcode',params, {
+    headers: {
+      Authorization: sessionStorage.getItem('myToken')
+    }
+  });
+  // qrcode ='data:image/jpeg;base64,'+ res;
+  qrcode = data.data;
+  show = true;
 };
 // 上传头像前处理
 const beforeRead = (file) => {
@@ -218,9 +239,13 @@ const applyCard = async () => {
         width="100"
         height="150"
         :src="photoFile"
+        @click="getQrcode"
         />
+        <!-- 点击头像获取二维码 -->
+        
         <van-uploader v-if="photoFile == null || photoFile == '' || photoFile == undefined" v-model="fileList" preview-size="100px" reupload="true" max-count="1" :after-read="afterRead" :before-read="beforeRead"/>
       </div>
+      <div style="font-size: 12px; text-align: center; color: #999;" >点头像查看二维码</div>
       <van-row class="list-row">
         <van-col span="24">
           <van-row>
@@ -255,18 +280,30 @@ const applyCard = async () => {
        
       </van-row>
       <div style="margin: 16px;">
-            <van-button round block type="primary" :disabled="statusType == true || userInfo.status != undefined" v-if="userInfo.hasCard == false" @click="applyCard">
-            <span v-if="userInfo.status == undefined">申请员工证</span>
-            <span v-if="userInfo.hasCard == false && userInfo.status == 0">待审核{{ statusType }}</span>
-            <span v-if="userInfo.hasCard == false && userInfo.status == 1">审核通过</span>
-            <span v-if="userInfo.hasCard == false && userInfo.status == 2">审核拒绝</span>
-            <span v-if="userInfo.hasCard == false && userInfo.status == 3">审核中</span>
+        <van-button round block type="primary" :disabled="statusType == true || userInfo.status != undefined" v-if="userInfo.hasCard == false" @click="applyCard">
+        <span v-if="userInfo.status == undefined">申请员工证</span>
+        <span v-if="userInfo.hasCard == false && userInfo.status == 0">待审核{{ statusType }}</span>
+        <span v-if="userInfo.hasCard == false && userInfo.status == 1">审核通过</span>
+        <span v-if="userInfo.hasCard == false && userInfo.status == 2">审核拒绝</span>
+        <span v-if="userInfo.hasCard == false && userInfo.status == 3">审核中</span>
 
-            </van-button>
-            <van-button round block disabled type="primary" v-if="userInfo.hasCard == true">
-            已申请过了
-            </van-button>
+        </van-button>
+        <van-button round block disabled type="primary" v-if="userInfo.hasCard == true">
+        已申请过了
+        </van-button>
+      </div>
+      <!-- 弹出层员工二维码 -->
+      <van-popup v-model:show="show" :style="{ padding: '0px' }">
+        <div style="display: flex; justify-content: space-around;">
+          <van-image
+          v-if="qrcode"
+          width="300"
+          height="300px!important"
+          :src="qrcode"
+          @click="getQrcode"
+          />
         </div>
+      </van-popup>
     </div>
 </template>
 
