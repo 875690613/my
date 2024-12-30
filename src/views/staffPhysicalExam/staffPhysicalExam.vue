@@ -43,6 +43,8 @@ const onClickLeft = () => {
     hasRecord = false;
     recordInfo = null;
     step = 0;
+    localStorage.removeItem('Authorization');
+    localStorage.removeItem('isExcellent');
   } else {
     history.back();
   }
@@ -137,6 +139,7 @@ const getCameras = () => {
               const token = res.data;
               // 获取员工code
               localStorage.setItem('Authorization', token);
+              localStorage.setItem('isExcellent', true);
               // pinia 存储员工信息
               excellentStore.token = token;
               step = 1;
@@ -159,6 +162,7 @@ const getCameras = () => {
           // 调用接口
           const res = await request.checkIsExcellent();
           if (res.status == 200) {
+            console.log("验证当前人员是否是优秀员工:",res.data);
             if (res.data && res.data.excellent == true) {
               isExcellent = true;
               excellentInfo = res.data;
@@ -193,6 +197,7 @@ onMounted(() => {
   if (token) {
     console.log('第一条路')
     localStorage.setItem('Authorization', token);
+    isExcellent = localStorage.getItem('isExcellent', isExcellent);// 是否是优秀员工
     hasRecord = excellentStore.hasRecord;
     if (hasRecord) {
       // 申请记录掏出来
