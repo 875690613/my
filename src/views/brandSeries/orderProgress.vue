@@ -24,6 +24,56 @@ let listData = $ref([]);
 let showBrand = $ref(false);
 let showRegion = $ref(false);
 let brandOptions = $ref([]);
+let rowsList = $ref(
+  [
+//    {
+//             "Id": 162593,
+//             "StyleNo": "SKPC3031(SK25FA3)",
+//             "StyleStatus": "正常",
+//             "StylePhase": "开发",
+//             "NumberOfOrders": 1,
+//             "UnitPrice": 0.00,
+//             "OrderDate": "2024-09-20",
+//             "SampleDemand": "可以直接生产",
+//             "RowIndex": 1
+//         },
+//         {
+//             "Id": 162594,
+//             "StyleNo": "SKSOD1650(SK25FA3)",
+//             "StyleStatus": "正常",
+//             "StylePhase": "开发",
+//             "NumberOfOrders": 1,
+//             "UnitPrice": 0.00,
+//             "OrderDate": "2024-09-20",
+//             "SampleDemand": "可以直接生产",
+//             "RowIndex": 2
+//         },
+//         {
+//             "Id": 162595,
+//             "StyleNo": "SKTU1646(SK25FA3)",
+//             "StyleStatus": "正常",
+//             "StylePhase": "开发",
+//             "NumberOfOrders": 1,
+//             "UnitPrice": 0.00,
+//             "OrderDate": "2024-09-20",
+//             "SampleDemand": "可以直接生产",
+//             "RowIndex": 3
+//         },
+// 面料列表
+// {
+//             "sptStockId": 171133,
+//             "stockName": "",
+//             "stockNo": "M1PC2410035",
+//             "color": "焦糖色",
+//             "contractNos": "524110210 ",
+//             "mEstimatedShipDate": "2024-11-28",
+//             "mEstimatedRecieveDate": "2024-11-30",
+//             "actualRecieveDate": "2024-12-05",
+//             "shipSupplyDate": "2024-11-22"
+//         }
+  ]
+);
+let balanceOrOverdue = $ref({});
 let regionOptions = $ref([]);
 const brandFieldNames = {
   text: 'name',
@@ -46,6 +96,7 @@ let refreshing = $ref(false);
 // }
 onMounted(() => {
   getDetailData()
+  getBalanceOrOverdue()
   getData();
 })
 const onRefresh = () => {
@@ -85,11 +136,22 @@ const onConfirmRegion = (item) => {
   regionName = selectedItem?.regionName;
   showRegion = false;
 };
+// 获取本周延误、本周按计划数据
+const getBalanceOrOverdue = async () => {
+  const {code, rows} = await request.get('/api/myStyle/fabricPlanSituation?id=' + id);
+  if (code == 200) {
+    // 处理完成后赋值给regionOptions
+    balanceOrOverdue = rows;
+    console.log("balanceOrOverdue:",balanceOrOverdue);
+  } else {
+    // 获取片区选项数据失败提示
+    showToast("获取本期对账数据失败");
+  }
+};
 const goFabricDetails = (item) => {
   console.log("item:",item);
-  item.id = 5395
   // 面料详情
-  router.push({ name: "fabricDetails", query: { id: item.id, regionId: item.RegionId, colorId: item.ColorId } });
+  router.push({ name: "fabricDetails", query: { id: item.sptStockId, regionId: item.RegionId, colorId: item.ColorId } });
 };
 
 let showTop = $ref(false);
@@ -120,30 +182,38 @@ const onSubmit = (values) => {
 };
 
 onMounted(() => {
-  getBrandOptions();
-  getRegionOptions();
+  // getBrandOptions();
+  // getRegionOptions();
 });
 
 // 请求接口获取数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  let url = '/api/myStyle/clientBalanceDetail?clientId=5395';
+  let url = '/api/myStyle/styleScheduleList';
   if (pageIndex == 0) {
-    url = '/api/myStyle/clientBalanceDetail?clientId=5395'
+    url = '/api/myStyle/styleScheduleList'
   }else if (pageIndex == 1) {
-    url = '/api/myStyle/clientBalanceDetail?clientId=5395'
+    url = '/api/myStyle/fabricScheduleList'
   }else{
-    url = '/api/myStyle/invoiceQuery'
+    // url = '/api/myStyle/invoiceQuery'
   }
 
-  params.accountStatementId = 5395//id
-  const { code, rows, total } = await request.get(url);
+  params.id = id
+  const { code, rows, total } = await request.post(url,params);
   if (code == 200) {
     // 计算finished
+    
     finished = rows.length < queryParams.limit;
     // 合并数据
-    listData = listData.concat(rows);
+    if(rows.length == 0){
+      console.log("rowsList:",rowsList);
+      listData = listData.concat(rowsList);
+    }else{
+      
+      listData = listData.concat(rows);
+    }
+    // listData = listData.concat(rows);
     listData = listData.map(item => {
       return {
         ...item,
@@ -187,17 +257,17 @@ const getRegionOptions = async () => {
     showToast("获取片区选项数据失败");
   }
 };
-// 获取对账单详情数据
+// 获取品牌系列详情数据
 const getDetailData = async () => {
   loading = true;
   // const params = {
   //   id: orderId,
   //   colorId
   // }
-  const { code, rows, msg } = await request.get('/api/myStyle/balanceInfo?accountStatementId='+ id);
+  const { code, rows, msg } = await request.get('/api/myStyle/brandSeriesDetail?id='+ id);
   if (code === 200) {
     detailData = rows
-    console.log("获取对账单详情数据rows:",rows);
+    console.log("获取品牌系列详情数据rows:",rows);
   }
   loading = false;
 }
@@ -224,123 +294,119 @@ const reset = () => {
 <template>
   <van-nav-bar :title="title[pageIndex]" fixed :border="false" left-arrow left-text="返回" @click-left="router.back()">
   </van-nav-bar>
-  <van-row class="top-info" v-if="!detailData">
+  <van-row class="top-info" v-if="detailData">
     <van-col span="24">
-      系列编码：SAP-2024-Q4(OND)-SMS Drop01-销样
-      <!-- 对账单号：{{ detailData.accountStatementNo }} -->
-    </van-col>
-    <van-col span="24">
-      系列名称：SPAW25
+      系列编码：{{ detailData.brandCollectionNO || '--' }}
     </van-col>
     <van-col span="24">
-      责任人：何湘云
+      系列名称：{{ detailData.seriesName || '--' }}
     </van-col>
     <van-col span="12">
-      开始日期：2024-10-31
+      责任人：{{ detailData.staff || '--' }}
     </van-col>
     <van-col span="12">
-      <!-- 结束时间：{{ detailData.endDate || '--' }} -->
-      结束日期：2024-12-31
+      运行状态：<van-tag type="success">{{ detailData.status }}</van-tag>
     </van-col>
     <van-col span="12">
-      运行状态：<van-tag type="success">运行</van-tag>
+      开始日期：{{ detailData.startDate || '--' }}
+    </van-col>
+    <van-col span="12">
+      结束日期：{{ detailData.endDate || '--' }}
     </van-col>
   </van-row>
   <!-- <van-divider /> -->
   <main class="page-main">
-    <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
-  <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-    <!-- 订单进度 -->
-    <van-list v-if="pageIndex == 0" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-row class="order-list-item" v-for="item in listData" :key="item.Id">
-        <van-col span="24" style="font-size: 16px;">
-          款号：8306(SPAW25)
-        </van-col>
-        <van-col span="12">
-          款号状态：正常
-        </van-col>
-        <van-col span="12">
-          项目类型：销样
-        </van-col>
-        <van-col span="12">
-          订单数量：7
-        </van-col>
-        <van-col span="12">
-          FOB单价：0.00
-        </van-col>
-        <van-col span="12">
-          样衣需求：可以直接生产
-        </van-col>
-        <van-col span="12">
-          拉款日期：2024-10-31
-        </van-col>
-      </van-row>
-    </van-list>
     
-    <!-- 面料进度 -->
-    <van-list v-if="pageIndex == 1" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <div class="top-data-group">
-        <div class="top-data-group__top">
-          <van-row class="group_row">
-            <van-col span="12">
-              <div class="top-data completed">
-                <div class="top-data__label">本周延误</div>
-                <div class="top-data__value color-red">34</div>
-              </div>
-            </van-col>
-            <van-col span="12">
-              <div class="top-data uncompleted">
-                <div class="top-data__label">本周按计划</div>
-                <div class="top-data__value color-green">44</div>
-              </div>
-            </van-col>
-          </van-row>
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <!-- 订单进度 -->
+      <van-list v-if="pageIndex == 0" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
+        <van-row class="order-list-item" v-for="item in listData" :key="item.Id">
+          <van-col span="24" style="font-size: 16px;">
+            款号：{{ item.StyleNo}}
+          </van-col>
+          <van-col span="12">
+            款号状态：{{ item.StyleStatus || '--' }}
+          </van-col>
+          <van-col span="12">
+            项目类型：{{ item.StylePhase || '--' }}
+          </van-col>
+          <van-col span="12">
+            订单数量：{{ item.NumberOfOrders || '--' }}
+          </van-col>
+          <van-col span="12">
+            FOB单价：{{ item.UnitPrice || '--' }}
+          </van-col>
+          <van-col span="12">
+            样衣需求：{{ item.SampleDemand || '--' }}
+          </van-col>
+          <van-col span="12">
+            拉款日期：{{ item.OrderDate || '--' }}
+          </van-col>
+        </van-row>
+      </van-list>
+      
+      <!-- 面料进度 -->
+      <van-list v-if="pageIndex == 1" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
+        <div class="top-data-group"  v-if="balanceOrOverdue">
+          <div class="top-data-group__top">
+            <van-row class="group_row">
+              <van-col span="12">
+                <div class="top-data completed">
+                  <div class="top-data__label">本周延误</div>
+                  <div class="top-data__value color-red">{{ balanceOrOverdue.delayed}}</div>
+                </div>
+              </van-col>
+              <van-col span="12">
+                <div class="top-data uncompleted">
+                  <div class="top-data__label">本周按计划</div>
+                  <div class="top-data__value color-green">{{ balanceOrOverdue.asPlaned}}</div>
+                </div>
+              </van-col>
+            </van-row>
+          </div>
         </div>
-      </div>
-      <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goFabricDetails(item)">
-        <van-col span="12">
-          面料编号：M1PC2410035
-        </van-col>
-        <van-col span="12">
-          面料品名：
-        </van-col>
-        <van-col span="12">
-          颜色：焦糖色
-        </van-col>
-        <van-col span="12">
-          合同号：524110210
-        </van-col>
-        <van-col span="12">
-          预计船样日期：2024-11-28
-        </van-col>
-        <van-col span="12">
-          船样供应日期：2024-11-22
-        </van-col>
-        <van-col span="12">
-          预计到货日期：2024-11-30
-        </van-col>
-        <van-col span="12">
-          实际到货日期：2024-12-05
-        </van-col>
-      </van-row>
-    </van-list>
-    <van-list v-if="pageIndex == 2" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
-      <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goFabricDetails(item)">
-        <van-col span="24" style="font-size: 16px;">
-          发票编号：{{ item.InvoiceNo }}
-        </van-col>
-        <van-col span="12">
-          发票类型：{{ item.InvoiceType }}
-        </van-col>
-        <van-col span="12">
-          开票日期：{{ item.InvoiceDate }}
-        </van-col>
-        <van-col span="12">
-          开票金额：{{ item.TotalAmount }}
-        </van-col>
-      </van-row>
-    </van-list>
-  </van-pull-refresh>
+        <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goFabricDetails(item)">
+          <van-col span="24">
+            面料编号：{{ item.stockNo || '--' }}
+          </van-col>
+          <van-col span="12">
+            面料品名：{{ item.stockName || '--' }}
+          </van-col>
+          <van-col span="12">
+            合同号：{{ item.contractNos || '--' }}
+          </van-col>
+          <van-col span="12">
+            预计船样日期：{{ item.mEstimatedShipDate || '--' }}
+          </van-col>
+          <van-col span="12">
+            船样供应日期：{{ item.shipSupplyDate || '--' }}
+          </van-col>
+          <van-col span="12">
+            预计到货日期：{{ item.mEstimatedRecieveDate || '--' }}
+          </van-col>
+          <van-col span="12">
+            实际到货日期：{{ item.actualRecieveDate || '--' }}
+          </van-col>
+        </van-row>
+      </van-list>
+      <van-list v-if="pageIndex == 2" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
+        <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goFabricDetails(item)">
+          <van-col span="24" style="font-size: 16px;">
+            发票编号：{{ item.InvoiceNo }}
+          </van-col>
+          <van-col span="12">
+            发票类型：{{ item.InvoiceType }}
+          </van-col>
+          <van-col span="12">
+            开票日期：{{ item.InvoiceDate }}
+          </van-col>
+          <van-col span="12">
+            开票金额：{{ item.TotalAmount }}
+          </van-col>
+        </van-row>
+      </van-list>
+    </van-pull-refresh>
+    <van-empty description="暂无数据" v-show="!refreshing && !loading && listData.length === 0"></van-empty>
   </main>
 </template>
 
@@ -405,7 +471,7 @@ const reset = () => {
 }
 .page-main {
   position: absolute;
-  top: 190px;
+  top: 176px;
   width: 100%;
   background: #f0f0f0;
 }

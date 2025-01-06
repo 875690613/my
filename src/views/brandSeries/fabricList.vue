@@ -120,25 +120,25 @@ const onSubmit = (values) => {
 };
 
 onMounted(() => {
-  getBrandOptions();
-  getRegionOptions();
+  // getBrandOptions();
+  // getRegionOptions();
 });
 
 // 请求接口获取数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  let url = '/api/myStyle/clientBalanceDetail?clientId=5395';
+  let url = '/api/myStyle/fabricPurchaseList';
   if (pageIndex == 0) {
-    url = '/api/myStyle/clientBalanceDetail?clientId=5395'
+    url = '/api/myStyle/fabricPurchaseList'
   }else if (pageIndex == 1) {
-    url = '/api/myStyle/clientBalanceDetail?clientId=5395'
+    url = '/api/myStyle/fabricInputList'
   }else{
-    url = '/api/myStyle/invoiceQuery'
+    // url = '/api/myStyle/invoiceQuery'
   }
 
-  params.accountStatementId = 5395//id
-  const { code, rows, total } = await request.get(url);
+  params.sptStockId = id
+  const { code, rows, total } = await request.post(url,params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -187,17 +187,17 @@ const getRegionOptions = async () => {
     showToast("获取片区选项数据失败");
   }
 };
-// 获取对账单详情数据
+// 获取面料详情数据
 const getDetailData = async () => {
   loading = true;
   // const params = {
   //   id: orderId,
   //   colorId
   // }
-  const { code, rows, msg } = await request.get('/api/myStyle/balanceInfo?accountStatementId='+ id);
+  const { code, rows, msg } = await request.get('/api/myStyle/fabricDetail?sptStockId='+ id);
   if (code === 200) {
     detailData = rows
-    console.log("获取对账单详情数据rows:",rows);
+    console.log("获取面料详情数据rows:",rows);
   }
   loading = false;
 }
@@ -224,38 +224,33 @@ const reset = () => {
 <template>
   <van-nav-bar :title="title[pageIndex]" fixed :border="false" left-arrow left-text="返回" @click-left="router.back()">
   </van-nav-bar>
-  <van-row class="top-info" v-if="!detailData">
+  <van-row class="top-info" v-if="detailData">
     <van-col span="24">
-      面料编号：M1PC2410035
-      <!-- 对账单号：{{ detailData.accountStatementNo }} -->
-    </van-col>
-    <van-col span="12">
-      面料品名：
-    </van-col>
-    <van-col span="12">
-      颜色：焦糖色
-    </van-col>
-    <van-col span="12">
-      供应商：懿品丝贸易
-    </van-col>
-    <van-col span="12">
-      <!-- 结束时间：{{ detailData.endDate || '--' }} -->
-      面料纱支：50D*50D
-    </van-col>
-    <van-col span="12">
-      规格：43*46
-    </van-col>
-    <van-col span="12">
-      克重：53gsm
-    </van-col>
-    <van-col span="12">
-      门幅：145cm
-    </van-col>
-    <van-col span="12">
-      计量单位：
+      面料编号：{{ detailData.StockNo || '--' }}
     </van-col>
     <van-col span="24">
-      仓库库位：面料正品仓库库位
+      面料品名：{{ detailData.StockName || '--' }}
+    </van-col>
+    <van-col span="12">
+      供应商：{{ detailData.Client || '--' }}
+    </van-col>
+    <van-col span="12">
+      面料纱支：{{ detailData.TheYarn || '--' }}
+    </van-col>
+    <van-col span="12">
+      规格：{{ detailData.TheConst || '--' }}
+    </van-col>
+    <van-col span="12">
+      克重：{{ detailData.TheWeight || '--' }}
+    </van-col>
+    <van-col span="12">
+      门幅：{{ detailData.TheWidth || '--' }}
+    </van-col>
+    <van-col span="12">
+      计量单位：{{ detailData.Measure || '--' }}
+    </van-col>
+    <van-col span="24">
+      仓库库位：{{ detailData.Location || '--' }}
     </van-col>
   </van-row>
   <!-- <van-divider /> -->
@@ -266,25 +261,25 @@ const reset = () => {
     <van-list v-if="pageIndex == 0" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id">
         <van-col span="24" style="font-size: 14px;">
-          采购公司：江阴极客时装有限公司
+          采购公司：{{ item.Company || '--' }}
         </van-col>
         <van-col span="12">
-          合同号：524110210
+          合同号：{{ item.ContractNo || '--' }}
         </van-col>
         <van-col span="12">
-          面料供应商：懿品丝贸易
+          面料供应商：{{ item.Client || '--' }}
         </van-col>
         <van-col span="12">
-          订购面料：M1PC2410035
+          订购面料：{{ item.PurchaseFabric || '--' }}
         </van-col>
         <van-col span="12">
-          原有面料：M1PC2410035
+          原有面料：{{ item.OldFabric || '--' }}
         </van-col>
         <van-col span="12">
-          款号：销样  5137(SPAW25)
+          款号：{{ item.StyleNos || '--' }}
         </van-col>
         <van-col span="12">
-          审核状态：<van-tag type="primary">已审核</van-tag>
+          审核状态：<van-tag type="primary">{{ item.Checked || '--' }}</van-tag>
         </van-col>
       </van-row>
     </van-list>
@@ -293,49 +288,49 @@ const reset = () => {
     <van-list v-if="pageIndex == 1" v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="item in listData" :key="item.Id" @click="goFabricDetails(item)">
         <van-col span="24">
-          入库面料：M1PC2410035
+          入库面料：{{ item.StockNo || '--' }}
         </van-col>
         <van-col span="12">
-          面料品名：
+          面料品名：{{ item.StockName || '--' }}
         </van-col>
         <van-col span="12">
-          颜色：焦糖色
+          面料颜色：{{ item.Color || '--' }}
         </van-col>
         <van-col span="12">
-          仓库库位：面料正品仓库库位
+          仓库库位：{{ item.Location || '--' }}
         </van-col>
         <van-col span="12">
-          入库编号：RK20241206105055
+          入库编号：{{ item.StorageRecordsNo || '--' }}
         </van-col>
         <van-col span="12">
-          入库类型：采购入库
+          入库类型：{{ item.StorageType || '--' }}
         </van-col>
         <van-col span="12">
-          入库单位：米
+          入库单位：{{ item.Unit || '--' }}
         </van-col>
         <van-col span="12">
-          入库门幅：0.00
+          入库门幅：{{ item.TheWidth || '--' }}
         </van-col>
         <van-col span="12">
-          入库克重：0.00
+          入库克重：{{ item.TheWeight || '--' }}
         </van-col>
         <van-col span="12">
-          入库数量：21.00
+          入库数量：{{ item.Numbers || '--' }}
         </van-col>
         <van-col span="12">
-          不合格数：0.00
+          不合格数：{{ item.UnqualifiedQty || '--' }}
         </van-col>
         <van-col span="12">
-          入库人：孙艳茹
+          入库人：{{ item.InputUser || '--' }}
         </van-col>
         <van-col span="12">
-          到货日期：2024-12-06
+          到货日期：{{ item.ArriveDate || '--' }}
         </van-col>
         <van-col span="12">
-          审核状态：<van-tag type="primary">已审核</van-tag>
+          审核状态：<van-tag type="primary">{{ item.Checked || '--' }}</van-tag>
         </van-col>
         <van-col span="12">
-          入库时间：2024-12-06
+          入库时间：{{ item.InputDate || '--' }}
         </van-col>
       </van-row>
     </van-list>

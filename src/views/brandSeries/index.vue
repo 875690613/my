@@ -12,8 +12,11 @@ let listData = $ref([]);
 let showSupplierType = $ref(false);
 let showTopIcon = $ref(false);
 let showBrand = $ref(false);
+let showClient = $ref(false);
 let brandName = $ref('');
-let brandOptions = $ref([]);
+let clientName = $ref('');
+let brandOptions = $ref([]);//品牌列表
+let clientOptions = $ref([]);//客户列表
 let showRight = $ref(false);
 let supplierTypeOptions = $ref([
   {
@@ -61,13 +64,14 @@ const onRefresh = () => {
 }
 
 const queryParams = reactive({
-  page: 1,
+  page: 0,
   limit: 10,
   keyword: null
 });
 // 展开搜索弹窗
 const showPopup = () => {
-  getBrandOptions();
+  getClientList();//获取客户列表
+  // getBrandOptions();//获取品牌列表
   showRight = true;
 };
 // 选择品牌
@@ -79,9 +83,21 @@ const onConfirmBrand = (item) => {
   brandName = selectedItem?.name;
   showBrand = false;
 };
+// 选择客户
+const onConfirmshowClient = (item) => {
+  console.log('选择客户',item);
+  const {selectedOptions} = item;
+  const selectedItem = selectedOptions?.[0];
+  queryParams.clientId = selectedItem?.id;
+  clientName = selectedItem?.name;
+  showClient = false;
+  brandName = '';
+  getBrandOptions()
+};
 const goBrandSeriesDetail = (item) => {
   // router.push({ name: "supplierReconcileList", query: { id: item.Id, regionId: item.RegionId, colorId: item.ColorId } });
-  router.push({ name: "brandSeriesDetail", query: { id: item.Id, regionId: item.RegionId, colorId: item.ColorId } });
+  console.log("item:",item);
+  router.push({ name: "brandSeriesDetail", query: { id: item.id, regionId: item.RegionId, colorId: item.ColorId } });
 };
 
 let showStartTimePicker = $ref(false);
@@ -114,12 +130,15 @@ const reset = () => {
   queryParams.page = 1;
   queryParams.orderNo = null;
   queryParams.BrandId = null;
+  queryParams.clientId = null;
   queryParams.regionId = null;
   queryParams.beginDate = null;
   queryParams.endDate = null;
   queryParams.keyword = null;
   queryParams.userName = null;
   brandName = '';
+  clientName = '';
+  brandOptions = [];
   listData = [];
   finished = false;
   getData();
@@ -127,14 +146,14 @@ const reset = () => {
 };
 
 onMounted(() => {
-  getRegionOptions();
+  // getRegionOptions();
 });
 
-// 请求接口获取数据
+// 请求接口获取列表数据
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/clientBalanceList', params);
+  const { code, rows, total } = await request.post('/api/myStyle/brandSeriesList', params);
   if (code == 200) {
     // 计算finished
     finished = rows.length < queryParams.limit;
@@ -162,9 +181,9 @@ const getRegionOptions = async () => {
     showToast("获取片区选项数据失败");
   }
 };
-// 获取本期已对账、未对账、已逾期数据
+// 获取今日提前、今日延迟、今日按计划数据
 const getBalanceOrOverdue = async () => {
-  const {code, rows} = await request.get('/api/myStyle/balanceOrOverdue');
+  const {code, rows} = await request.get('/api/myStyle/seriesPlanSituation');
   if (code == 200) {
     // 处理完成后赋值给regionOptions
     balanceOrOverdue = rows;
@@ -176,7 +195,7 @@ const getBalanceOrOverdue = async () => {
 };
 // 获取品牌选项数据
 const getBrandOptions = async () => {
-  const {code, rows} = await request.get('/api/sys/getClientLink');
+  const {code, rows} = await request.get('/api/sys/getClientLinkByClient?clientId='+ queryParams.clientId);
   if (code == 200) {
     // 处理品牌选项数据
     // 处理完成后赋值给brandOptions
@@ -187,6 +206,17 @@ const getBrandOptions = async () => {
     // 获取品牌选项数据失败提示
     showToast("获取品牌选项数据失败");
   }
+};
+// 获取客户选项列表
+const getClientList = async () => {
+    const { code, rows } = await request.get('/api/sys/getClient');
+    
+    if (code == 200) {
+      clientOptions = rows;
+        
+    } else {
+        showToast("获取客户列表失败");
+    }
 };
 
 
@@ -205,19 +235,19 @@ const getBrandOptions = async () => {
         <van-col span="8">
           <div class="top-data completed">
             <div class="top-data__label">今日提前</div>
-            <div class="top-data__value color-green">{{ balanceOrOverdue.balanced }}</div>
+            <div class="top-data__value color-green">{{ balanceOrOverdue.beforeHanded || 0}}</div>
           </div>
         </van-col>
         <van-col span="8">
           <div class="top-data uncompleted">
             <div class="top-data__label">今日延迟</div>
-            <div class="top-data__value color-orange">{{ balanceOrOverdue.unbalanced }}</div>
+            <div class="top-data__value color-orange">{{ balanceOrOverdue.delayed || 0 }}</div>
           </div>
         </van-col>
         <van-col span="8">
           <div class="top-data overdue">
             <div class="top-data__label">今日按计划</div>
-            <div class="top-data__value color-red">{{ balanceOrOverdue.overdued }}</div>
+            <div class="top-data__value color-red">{{ balanceOrOverdue.asPlaned || 0 }}</div>
           </div>
         </van-col>
       </van-row>
@@ -230,18 +260,22 @@ const getBrandOptions = async () => {
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad" class="order-list">
       <van-row class="order-list-item" v-for="(item, index) in listData" :key="item.Id" @click="goBrandSeriesDetail(item)">
         <van-col span="24">
-          系列编码：SAP-2024-Q4(OND)-SMS Drop01-销样
-          <!-- {{ item.Name }} -->
+          系列编码：{{ item.brandCollectionNO }}
         </van-col>
         <van-col span="24">
-          系列名称：SPAW25
-          <!-- {{ item.Name }} -->
+          系列名称：{{ item.seriesName }}
         </van-col>
         <van-col span="12">
-          责任人：{{ item.Name}}
+          责任人：{{ item.staff}}
         </van-col>
         <van-col span="12" style="text-align: right;">
-          运行状态：{{ item.PlanBalanceDate }}
+          系列状态：{{ item.status }}
+        </van-col>
+        <van-col span="12">
+          开始时间：{{ item.startDate }}
+        </van-col>
+        <van-col span="12" style="text-align: right;">
+          结束时间：{{ item.endDate }}
         </van-col>
       </van-row>
     </van-list>
@@ -252,12 +286,29 @@ const getBrandOptions = async () => {
     <!-- 搜索表单 -->
     <van-form @submit="onSubmit">
       <van-cell-group inset>
-        <van-field
+        <!-- <van-field
           v-model="queryParams.userName"
           name="userName"
           label="用户名称"
           placeholder="请输入"
-        />
+        /> -->
+        <!-- <van-popup v-model:show="showPicker" position="bottom">
+            <van-picker title="选择客户" 
+                :columns="clientArr" 
+                @confirm="onConfirm" 
+                @cancel="showPicker = false"
+                :columns-field-names="{text: 'name', value: 'id'}"
+            />
+        </van-popup> -->
+        <van-field
+        v-model="clientName"
+        is-link
+        readonly
+        name="clientId"
+        label="客户"
+        placeholder="点击选择客户"
+        @click="showClient = true"
+      />
         <van-field
         v-model="brandName"
         is-link
@@ -265,9 +316,11 @@ const getBrandOptions = async () => {
         name="BrandId"
         label="品牌"
         placeholder="点击选择品牌"
+        :disabled="!clientName"
         @click="showBrand = true"
       />
         <van-field
+        v-if="false"
           v-model="queryParams.beginDate"
           name="beginDate"
           label="开始时间"
@@ -277,6 +330,7 @@ const getBrandOptions = async () => {
           @click="showStartTimePicker = true"
         />
         <van-field
+        v-if="false"
           v-model="queryParams.endDate"
           name="endDate"
           label="结束时间"
@@ -305,12 +359,21 @@ const getBrandOptions = async () => {
   </van-popup>
   <!-- 品牌下拉框 -->
   <van-popup v-model:show="showBrand" position="bottom">
-    <van-picker
+    <van-picker title="选择品牌" 
       :columns="brandOptions"
       :columns-field-names="brandFieldNames"
       @confirm="onConfirmBrand"
       @cancel="showBrand = false"
     />
+  </van-popup>
+  <!-- 客户下拉 -->
+  <van-popup v-model:show="showClient" position="bottom">
+      <van-picker title="选择客户" 
+          :columns="clientOptions" 
+          @confirm="onConfirmshowClient" 
+          @cancel="showClient = false"
+          :columns-field-names="{text: 'name', value: 'id'}"
+      />
   </van-popup>
   <!-- 开始时间 -->
   <van-popup v-model:show="showStartTimePicker" position="bottom">

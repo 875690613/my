@@ -1,3 +1,4 @@
+<!-- 品牌系列周计划 -->
 <script setup>
 import { useRouter } from 'vue-router';
 import request from '@/utils/request';

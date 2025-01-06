@@ -20,7 +20,7 @@ watchEffect(() => {
   colorId = router.currentRoute.value.query.colorId
 })
 
-// 获取对账单详情数据
+// 获取品牌系列详情数据
 const getData = async () => {
   loading = true;
   const params = {
@@ -28,7 +28,7 @@ const getData = async () => {
     id: 5395,
     colorId
   }
-  const { code, rows, msg } = await request.get('/api/myStyle/clientBalanceDetail?clientId='+ id);
+  const { code, rows, msg } = await request.get('/api/myStyle/brandSeriesDetail?id='+ id);
   if (code === 200) {
     detailData = rows
   }
@@ -49,24 +49,22 @@ onMounted(() => {
     <template v-else-if="detailData">
       <van-row class="order-info">
         <van-col span="24">
-          系列编码：SAP-2024-Q4(OND)-SMS Drop01-销样
-          <!-- 对账单号：{{ detailData.accountStatementNo }} -->
+          系列编码：{{ detailData.brandCollectionNO || '--' }}
         </van-col>
         <van-col span="24">
-          系列名称：SPAW25
-        </van-col>
-        <van-col span="24">
-          责任人：何湘云
+          系列名称：{{ detailData.seriesName || '--' }}
         </van-col>
         <van-col span="12">
-          开始日期：2024-10-31
+          责任人：{{ detailData.staff || '--' }}
         </van-col>
         <van-col span="12">
-          <!-- 结束时间：{{ detailData.endDate || '--' }} -->
-          结束日期：2024-12-31
+          运行状态：<van-tag type="success">{{ detailData.status }}</van-tag>
         </van-col>
         <van-col span="12">
-          运行状态：<van-tag type="success">运行</van-tag>
+          开始日期：{{ detailData.startDate || '--' }}
+        </van-col>
+        <van-col span="12">
+          结束日期：{{ detailData.endDate || '--' }}
         </van-col>
       </van-row>
       <van-row class="operators">

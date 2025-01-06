@@ -28,7 +28,7 @@ const getData = async () => {
     id: 5395,
     colorId
   }
-  const { code, rows, msg } = await request.get('/api/myStyle/clientBalanceDetail?clientId='+ id);
+  const { code, rows, msg } = await request.get('/api/myStyle/fabricDetail?sptStockId='+ id);
   if (code === 200) {
     detailData = rows
   }
@@ -49,36 +49,31 @@ onMounted(() => {
     <template v-else-if="detailData">
       <van-row class="order-info">
         <van-col span="24">
-          面料编号：M1PC2410035
-          <!-- 对账单号：{{ detailData.accountStatementNo }} -->
-        </van-col>
-        <van-col span="12">
-          面料品名：
-        </van-col>
-        <van-col span="12">
-          颜色：焦糖色
-        </van-col>
-        <van-col span="12">
-          供应商：懿品丝贸易
-        </van-col>
-        <van-col span="12">
-          <!-- 结束时间：{{ detailData.endDate || '--' }} -->
-          面料纱支：50D*50D
-        </van-col>
-        <van-col span="12">
-          规格：43*46
-        </van-col>
-        <van-col span="12">
-          克重：53gsm
-        </van-col>
-        <van-col span="12">
-          门幅：145cm
-        </van-col>
-        <van-col span="12">
-          计量单位：
+          面料编号：{{ detailData.StockNo || '--' }}
         </van-col>
         <van-col span="24">
-          仓库库位：面料正品仓库库位
+          面料品名：{{ detailData.StockName || '--' }}
+        </van-col>
+        <van-col span="12">
+          供应商：{{ detailData.Client || '--' }}
+        </van-col>
+        <van-col span="12">
+          面料纱支：{{ detailData.TheYarn || '--' }}
+        </van-col>
+        <van-col span="12">
+          规格：{{ detailData.TheConst || '--' }}
+        </van-col>
+        <van-col span="12">
+          克重：{{ detailData.TheWeight || '--' }}
+        </van-col>
+        <van-col span="12">
+          门幅：{{ detailData.TheWidth || '--' }}
+        </van-col>
+        <van-col span="12">
+          计量单位：{{ detailData.Measure || '--' }}
+        </van-col>
+        <van-col span="24">
+          仓库库位：{{ detailData.Location || '--' }}
         </van-col>
       </van-row>
       <van-row class="operators">
