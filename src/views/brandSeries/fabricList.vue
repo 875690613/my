@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 // const vConsole = new VConsole();
 
 const router = useRouter();
-document.title = '品牌系列';
+document.title = '系列周计划';
 let pageIndex = $ref(0);
 let title = ['面料采购', '面料入库', '']
 let id = $ref()

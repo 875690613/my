@@ -3,7 +3,7 @@ import { onMounted, watchEffect } from 'vue';
 import { useRouter } from 'vue-router'
 import request from '@/utils/request';
 const router = useRouter()
-document.title = '品牌系列';
+document.title = '系列周计划';
 
 let loading = $ref(false)
 

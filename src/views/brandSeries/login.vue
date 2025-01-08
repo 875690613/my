@@ -8,7 +8,7 @@ let phone = $ref(''); // 17501516805
 let pwd = $ref(''); // 123456
 let toast = $ref(null)
 
-document.title = '品牌系列';
+document.title = '系列周计划';
 
 const router = useRouter();
 const onSubmit = async (values) => {
@@ -16,12 +16,12 @@ const onSubmit = async (values) => {
     message: '加载中...',
     forbidClick: true,
   });
-  const { code, rows, message } = await request.get('/api/sys/loginIn', values);
+  const { code, rows, msg } = await request.get('/api/sys/loginIn', values);
   toast.close();
   if (code == 200) {
     // Toast登录成功提示
     showToast({
-      message: message,
+      message: msg,
       className: 'custom-toast',
     })
     
@@ -45,9 +45,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <van-nav-bar title="登录" fixed :border="false" />
+  <van-nav-bar title="" fixed :border="false" />
   <main>
-    <div class="login-title">品牌系列</div>
+    <div class="login-title"></div>
     <van-form @submit="onSubmit">
         <van-cell-group inset>
             <van-field

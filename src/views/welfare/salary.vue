@@ -360,6 +360,13 @@ const clickWelcome = () => {
             </van-cell>
           </template>
         </template>
+        <template v-else>
+          <van-cell title="工资薪金">
+              <template #label>
+                <div style="text-align: center;">暂无数据</div>
+              </template>
+            </van-cell>
+        </template>
       </div>
       <!-- 选择年度/月份 -->
       <van-popup v-model:show="showDatePicker" position="bottom">
