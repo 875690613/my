@@ -334,7 +334,7 @@ const reset = () => {
             订单数量：{{ item.NumberOfOrders || '--' }}
           </van-col>
           <van-col span="12">
-            FOB单价：{{ item.UnitPrice || '--' }}
+            FOB单价：{{ item.UnitPrice }}
           </van-col>
           <van-col span="12">
             样衣需求：{{ item.SampleDemand || '--' }}
@@ -411,6 +411,9 @@ const reset = () => {
 </template>
 
 <style scoped lang="scss">
+.van-nav-bar__text{
+  line-height: normal!important;
+}
 .top-data-group {
   .top-data-group__top {
     // background-color: #0b7beb1f;

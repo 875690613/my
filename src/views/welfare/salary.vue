@@ -71,7 +71,7 @@ const goList = () => {
 
 onMounted(() => {
   // 测试调试代码
-  // localStorage.setItem('Authorization', '230037');
+  localStorage.setItem('Authorization', '230069');
 })
 
 onUnmounted(() => {
@@ -211,6 +211,8 @@ const getCameras = () => {
                 const { code, message } = res;
                 if (code == 0) {
                   showToast(message)
+                  // 保存token
+                  sessionStorage.setItem('token', res.data.data.token);
                   step.value = 2;
                   const params = {
                     staffNo: authCode.value,
@@ -238,6 +240,7 @@ const getCameras = () => {
             request.get('/api/machine/user/salary/byUserStaffNo', params).then((res) => {
                   const { code, message, data } = res;
                   if (code == 0) {
+                    step.value = 2;
                     if (data?.data?.length > 0) {
                       salaryList.value = data.data;
                     } else {
@@ -268,8 +271,17 @@ const clickWelcome = () => {
   clickCount++;
   // 点击5次后触发
   if (clickCount >= 5) {
-    handleMCode('230037');
+    handleMCode('230069');//wang230037  xia230069   chen240039
     clickCount = 0;
+    //如果存在缓存token，则跳转登录页
+    if (sessionStorage.getItem('token')) {
+      step.value = 2;
+      const params = {
+        staffNo: authCode.value,
+        year: '2024'
+      }
+      getSalaryList(params)
+    }
   }
   
   setTimeout(() => {
@@ -367,31 +379,73 @@ const clickWelcome = () => {
       <!-- 工资明细 -->
        <div>
         <van-cell-group :title="salaryDetailTitle">
-          <van-cell title="应发工资" :value="salaryDetail.n5" />
-          <van-cell title="实发工资" :value="salaryDetail.n13" />
+          <van-cell title="应发工资" :value="salaryDetail.n17" />
+          <van-cell title="实发工资" :value="salaryDetail.n28" />
         </van-cell-group>
         <div>
           <van-cell-group title="基本信息">
             <van-cell title="姓名" :value="salaryDetail.staff" />
             <van-cell title="部门名称" :value="salaryDetail.deptName" />
-            <van-cell title="岗位/职务" :value="salaryDetail.jobName" />
-            <van-cell title="身份证号" :value="salaryDetail.idNumber" />
+            <van-cell title="岗位/职务" :value="salaryDetail.jobName || '--'" />
+            <!-- <van-cell title="身份证号" :value="salaryDetail.idNumber" /> -->
             <van-cell title="工号" :value="salaryDetail.employeeNumber" />
           </van-cell-group>
-          <van-cell-group title="工资明细">
-            <van-cell title="基本工资" :value="salaryDetail.n1" />
-            <van-cell title="绩效及加班工资" :value="salaryDetail.n2" />
-            <van-cell title="其他补贴" :value="salaryDetail.n3" />
-            <van-cell title="扣未出勤工资" :value="salaryDetail.n4" />
-            <van-cell title="应发工资" :value="salaryDetail.n5" />
-            <van-cell title="应扣社保" :value="salaryDetail.n6" />
-            <van-cell title="实扣社保" :value="salaryDetail.n7" />
-            <van-cell title="应扣个税" :value="salaryDetail.n8" />
-            <van-cell title="实扣个税" :value="salaryDetail.n9" />
-            <van-cell title="实扣公积金" :value="salaryDetail.n10" />
-            <van-cell title="请假扣除" :value="salaryDetail.n11" />
-            <van-cell title="其他扣除" :value="salaryDetail.n12" />
-            <van-cell title="实发工资" :value="salaryDetail.n13" />
+          <van-cell-group title="工资明细" v-if="salaryDetail.accountName == '江阴逐日信息科技有限公司'">
+            <van-cell title="应出勤" :value="salaryDetail.n1 || 0" />
+            <van-cell title="事假" :value="salaryDetail.n2 || 0" />
+            <van-cell title="病假" :value="salaryDetail.n3 || 0" />
+            <van-cell title="年假" :value="salaryDetail.n4 || 0" />
+            <van-cell title="婚假" :value="salaryDetail.n5 || 0" />
+            <van-cell title="产假" :value="salaryDetail.n6 || 0" />
+            <van-cell title="丧假" :value="salaryDetail.n7 || 0" />
+            <van-cell title="调休" :value="salaryDetail.n8 || 0" />
+            <van-cell title="加班" :value="salaryDetail.n9 || 0" />
+            <van-cell title="未出勤" :value="salaryDetail.n10 || 0" />
+            <van-cell title="实出勤" :value="salaryDetail.n11 || 0" />
+            <van-cell title="基本工资" :value="salaryDetail.n12 || 0" />
+            <van-cell title="绩效及加班工资" :value="salaryDetail.n13 || 0" />
+            <van-cell title="考核部分" :value="salaryDetail.n14 || 0" />
+            <van-cell title="其它补贴" :value="salaryDetail.n15 || 0" />
+            <van-cell title="扣未出勤工资" :value="salaryDetail.n16 || 0" />
+            <van-cell title="应发" :value="salaryDetail.n17 || 0" />
+            <van-cell title="个人借款" :value="salaryDetail.n18 || 0" />
+            <van-cell title="应扣社保" :value="salaryDetail.n19 || 0" />
+            <van-cell title="实扣社保" :value="salaryDetail.n20 || 0" />
+            <van-cell title="应扣个税" :value="salaryDetail.n21 || 0" />
+            <van-cell title="实扣个税" :value="salaryDetail.n22 || 0" />
+            <van-cell title="应扣公积金" :value="salaryDetail.n23 || 0" />
+            <van-cell title="实扣公积金" :value="salaryDetail.n24 || 0" />
+            <van-cell title="事假扣除" :value="salaryDetail.n25 || 0" />
+            <van-cell title="病假扣除" :value="salaryDetail.n26 || 0" />
+            <van-cell title="其他扣除" :value="salaryDetail.n27 || 0" />
+            <van-cell title="实发" :value="salaryDetail.n28 || 0" />
+          </van-cell-group>
+          <van-cell-group title="工资明细" v-if="salaryDetail.accountName == '靖江极客时装有限公司'">
+            <van-cell title="实出天数" :value="salaryDetail.n29 || 0" />
+            <van-cell title="实出工时" :value="salaryDetail.n30 || 0" />
+            <van-cell title="正常出勤-工时" :value="salaryDetail.n32 || 0" />
+            <van-cell title="正常出勤-金额" :value="salaryDetail.n33 || 0" />
+            <van-cell title="日常加班-工时" :value="salaryDetail.n35 || 0" />
+            <van-cell title="日常加班-金额 1.5x" :value="salaryDetail.n36 || 0" />
+            <van-cell title="休息日加班-工时" :value="salaryDetail.n38 || 0" />
+            <van-cell title="休息日加班-金额 2x" :value="salaryDetail.n39 || 0" />
+            <van-cell title="法定节日加班-工时" :value="salaryDetail.n41 || 0" />
+            <van-cell title="法定节日加班-金额 3x" :value="salaryDetail.n42 || 0" />
+            <van-cell title="应发加班工资" :value="salaryDetail.n43 || 0" />
+            <van-cell title="基本工资" :value="salaryDetail.n44 || 0" />
+            <van-cell title="加班工资" :value="salaryDetail.n45 || 0" />
+            <van-cell title="绩效/补贴" :value="salaryDetail.n46 || 0" />
+            <van-cell title="应发工资" :value="salaryDetail.n47 || 0" />
+            <van-cell title="应扣保险" :value="salaryDetail.n48 || 0" />
+            <van-cell title="实扣保险" :value="salaryDetail.n49 || 0" />
+            <van-cell title="应扣所得税" :value="salaryDetail.n50 || 0" />
+            <van-cell title="实扣所得税" :value="salaryDetail.n51 || 0" />
+            <van-cell title="餐补扣除" :value="salaryDetail.n52 || 0" />
+            <van-cell title="交通补贴扣除" :value="salaryDetail.n53 || 0" />
+            <van-cell title="产量考核扣除" :value="salaryDetail.n54 || 0" />
+            <van-cell title="其他扣除" :value="salaryDetail.n55 || 0" />
+            <van-cell title="实发工资" :value="salaryDetail.n56 || 0" />
+            
           </van-cell-group>
         </div>
        </div>

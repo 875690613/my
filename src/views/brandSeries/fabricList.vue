@@ -38,12 +38,12 @@ let loading = $ref(false);
 let finished = $ref(false);
 let refreshing = $ref(false);
 
-// const onLoad = () => {
-//   console.log('onLoad...')
-//   queryParams.page++;
-//   getDetailData()
-//   getData();
-// }
+const onLoad = () => {
+  console.log('onLoad...')
+  queryParams.page++;
+  // getDetailData()
+  getData();
+}
 onMounted(() => {
   getDetailData()
   getData();
@@ -126,8 +126,9 @@ onMounted(() => {
 
 // 请求接口获取数据
 const getData = async () => {
-  loading = true;
+  // loading = true;
   const params = removeEmptyProps(queryParams);
+  console.log("获取列表：",params);
   let url = '/api/myStyle/fabricPurchaseList';
   if (pageIndex == 0) {
     url = '/api/myStyle/fabricPurchaseList'
@@ -276,7 +277,7 @@ const reset = () => {
           原有面料：{{ item.OldFabric || '--' }}
         </van-col>
         <van-col span="12">
-          款号：{{ item.StyleNos || '--' }}
+          款号：<span class="truncate">{{ item.StyleNos || '--' }}</span>
         </van-col>
         <van-col span="12">
           审核状态：<van-tag type="primary">{{ item.Checked || '--' }}</van-tag>
@@ -355,6 +356,10 @@ const reset = () => {
 </template>
 
 <style scoped lang="scss">
+.van-col--12{
+  display: flex;
+  align-items: center;
+}
 .order-list {
   // padding: 10px 15px;
 }
@@ -389,7 +394,15 @@ const reset = () => {
 }
 .van-tag {
   line-height: normal;
-  height: 100%;
+  // height: 100%;
   vertical-align: middle;
+}
+.truncate {
+  display: inline-block;
+  white-space: nowrap; /* 禁止文本换行 */
+  overflow: hidden; /* 隐藏溢出的部分 */
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
+  max-width: 75%; /* 设置容器的最大宽度 */
 }
 </style>
