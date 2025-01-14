@@ -140,6 +140,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/auth\/jwt\/staff/, '')
       },
+      // 年会排行榜
+      '/erp_api': {
+        target: 'https://businessbbs.zhuritec.com/erp_api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/erp_api/, '')
+      },
       // 验证当前人员是否是优秀员工
       // 报名优秀员工体检
       // 优秀员工体检查询列表
