@@ -201,9 +201,11 @@ const onFinish = () => {
                 <van-row>
                   <van-col span="4" style="text-align: center;">
                     <div class="num">
-                      <img class="animate__animated animate__bounceInDown" src="@/assets/images/phb01.png" v-if="index == 0" alt="" style="width: 50%;">
-                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb02.png" v-else style="width: 50%;">
-                      <span style="margin-top: -6px;">{{ index + 1 }}</span>
+                      <img class="animate__animated animate__bounceInDown" src="@/assets/images/phb_1.png" v-if="index == 0" alt="" style="width: 50%;">
+                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-if="index == 1" alt="" style="width: 50%;">
+                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_3.png" v-if="index == 2" alt="" style="width: 50%;">
+                      <!-- <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-else style="width: 50%;"> -->
+                      <span style="margin-top: -3px; font-weight: bold;">{{ index + 1 }}</span>
                     </div>
                   </van-col>
                   <van-col span="10" class="name" v-if="item.creator.realName">{{ item.creator.deptName }}{{ item.creator.realName }}</van-col>
@@ -355,6 +357,7 @@ const onFinish = () => {
       font-size: 12px;
       font-weight: bold;
       margin-bottom: 10px;
+      text-shadow: 0px 1.5px 1px #d1af65; /* 水平阴影，模糊半径为 4px，透明度为 50% */
     }
     // 活动介绍
     .activities{
@@ -490,13 +493,14 @@ const onFinish = () => {
           font-weight: bold;
           font-size: 20px;
           margin: 0 auto;
-          animation: scaleUpAndDown 10s infinite; /* 持续时间为10秒，无限次循环 */
+          text-shadow: 0px 1.5px 1px #d1af65; /* 水平阴影，模糊半径为 4px，透明度为 50% */
+          // animation: scaleUpAndDown 2s infinite; /* 持续时间为10秒，无限次循环 */
   
         }
         .xzImg{
           width: 200%;
           position: absolute;
-          animation: rotate 1.5s linear infinite; /* 2秒完成一次旋转，线性速度，无限次循环 */
+          animation: rotate 2s linear infinite; /* 2秒完成一次旋转，线性速度，无限次循环 */
         }
       }
     }
