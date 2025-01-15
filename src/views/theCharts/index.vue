@@ -23,12 +23,13 @@ let djsShow = $ref(false);//倒计时
 let phbShow = $ref(false);//排行榜
 let activeShow = $ref(true);//活动详情
 let activeList = $ref([]);//活动获奖名单
-let title = $ref('2025年会照片评选活动');//2025年会照片评选结果
+let title = $ref(true);//2025年会照片评选结果
+let title2 = $ref(false);//2025年会照片评选结果
 
 
 const onLoad = () => {
   console.log('onLoad...')
-  // getData();
+  
   // getBalanceOrOverdue()
 }
 
@@ -46,7 +47,7 @@ const goOrderDetail = (orgId) => {
 };
 
 onMounted(() => {
-  // getData();
+  getData();
   
  
 });
@@ -80,13 +81,36 @@ const toggle = () => {
 const getData = async () => {
   loading = true;
   const params = removeEmptyProps(queryParams);
-  axios.get('https://businessbbs.zhuritec.com/erp_api/most_like/69/3', params, {
+  axios.get('https://businessbbs.zhuritec.com/erp_api/most_like/69/20', params, {
     headers: {
       authorization: sessionStorage.getItem('token')
     }
   }).then(res => {
     console.log("排行榜：",res.data);
-    activeList = res.data;
+    activeList = res.data
+  //   .map(item => {
+  //     if (item.id === 1) {
+  //       item.active = true;
+  //     } else {
+  //       item.active = false;
+  //     }
+
+  // })
+  //比较activeList中的数据，如果user_id 相同，则比较like_count的值，留下likecount值大的数据
+  const filteredData = activeList.reduce((maxItem, currentItem) => {
+  if (currentItem.user_id === maxItem.user_id && currentItem.like_count > maxItem.like_count) {
+      return currentItem;
+    }
+    return maxItem;
+  }, activeList[0]);
+  // activeList.push(filteredData)
+  //将filteredData 添加到activeList中
+  activeList.push(filteredData)
+  // activeList中如果user_id相同去重
+  activeList = activeList.filter((item, index, self) => {
+    return self.findIndex(i => i.user_id === item.user_id) === index;
+  });
+  console.log("activeList:",activeList);
 })
   // const { data} = await request.get('/erp_api/most_like/69/3', params, {
   //   headers: {
@@ -101,9 +125,10 @@ const countDown = $ref(null);
 
 const start = () => {
   djsShow = true;
-  title = '2025年会照片评选结果';
+  
   activeShow = false;
-  countDown.start();
+  // countDown.start();
+  // getData()
 
 };
 const pause = () => {
@@ -113,9 +138,8 @@ const reset = () => {
   countDown.reset();
 };
 const onFinish = () => {
-  title = ''
-  getData()
-  title = '2025年会照片评选结果';
+  title = false;
+  title2 = true;
   phbShow = true;//显示排行榜
   djsShow = false;//倒计时隐藏
   // showToast('倒计时结束');
@@ -131,7 +155,8 @@ const onFinish = () => {
     <div class="bg">
       <div class="content">
         <!-- <button @click="toggle">切换全屏</button> -->
-        <div class="title animate__animated animate__zoomInDown" v-if="title" style="text-align: center;">{{ title }}</div>
+        <div class="title animate__animated animate__zoomInDown" v-if="title" style="text-align: center;">2025年会照片评选活动</div>
+        <div class="title animate__animated animate__fadeInDown" v-if="title2" style="text-align: center;">2025年会照片评选结果</div>
         <!-- 活动介绍 -->
         <div class="activities" v-if="activeShow">
           <van-row class="list-row">
@@ -172,12 +197,12 @@ const onFinish = () => {
           </van-col>
           <!-- 获奖列表 -->
            <template v-if="activeList.length > 0">
-              <van-col span="24" v-for="(item,index) in activeList" :key="index"  class=" animate__animated animate__fadeInUp">
+              <van-col span="24" v-for="(item,index) in activeList.slice(0, 3)" :key="index"  class=" animate__animated animate__fadeInUp">
                 <van-row>
                   <van-col span="4" style="text-align: center;">
                     <div class="num">
-                      <img src="@/assets/images/phb01.png" v-if="index == 0" alt="" style="width: 50%;">
-                      <img src="@/assets/images/phb02.png" v-else style="width: 50%;">
+                      <img class="animate__animated animate__bounceInDown" src="@/assets/images/phb01.png" v-if="index == 0" alt="" style="width: 50%;">
+                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb02.png" v-else style="width: 50%;">
                       <span style="margin-top: -6px;">{{ index + 1 }}</span>
                     </div>
                   </van-col>
@@ -189,7 +214,7 @@ const onFinish = () => {
                   </van-col>
                   <van-col span="6" style="text-align: center;">
                       <div class="jpImg">
-                        <img :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px;" >
+                        <img class="animate__animated animate__zoomInUp" :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px;" >
                         <!-- <van-image
                           width="auto"
                           height="100"
@@ -325,10 +350,11 @@ const onFinish = () => {
     margin: 5px auto;
     padding-left: 20px;
     .title{
+      margin-left: -20px;
       margin-top: 20px;
       font-size: 12px;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
     }
     // 活动介绍
     .activities{
@@ -464,6 +490,7 @@ const onFinish = () => {
           font-weight: bold;
           font-size: 20px;
           margin: 0 auto;
+          animation: scaleUpAndDown 10s infinite; /* 持续时间为10秒，无限次循环 */
   
         }
         .xzImg{
@@ -489,7 +516,57 @@ const onFinish = () => {
 .rotating-element {
   animation: rotate 2s linear infinite; /* 2秒完成一次旋转，线性速度，无限次循环 */
 }
+// 放大缩小的动画
+@keyframes scaleUpAndDown {
+  0% {
+    transform: scale(1); /* 原始大小 */
+  }
+  10% {
+    transform: scale(1.3); /* 放大到150% */
+  }
+  20% {
+    transform: scale(1); /* 缩小回原始大小 */
+  }
+  30% {
+    transform: scale(1.3); /* 放大到150% */
+  }
+  40% {
+    transform: scale(1); /* 缩小回原始大小 */
+  }
+  50% {
+    transform: scale(1.3); /* 放大到150% */
+  }
+  60% {
+    transform: scale(1); /* 缩小回原始大小 */
+  }
+  70% {
+    transform: scale(1.3); /* 放大到150% */
+  }
+  80% {
+    transform: scale(1); /* 缩小回原始大小 */
+  }
+  90% {
+    transform: scale(1.3); /* 放大到150% */
+  }
+  100% {
+    transform: scale(1); /* 缩小回原始大小 */
+  }
+}
 
+.animated-element {
+  animation: scaleUpAndDown 10s infinite; /* 持续时间为10秒，无限次循环 */
+}
+// 旋转
+@keyframes spin {
+  from {
+  transform: rotate(0deg);
+}
+  to {
+  transform: rotate(360deg);
+}
+}
 
-
+.rotate {
+  animation: spin 2s infinite linear;
+}
 </style>
