@@ -47,8 +47,34 @@ const goOrderDetail = (orgId) => {
 
 onMounted(() => {
   // getData();
+  
  
 });
+// 检测浏览器是否全屏
+const enter = () => {
+  const element = document.documentElement
+  if (element.requestFullscreen) {
+    element.requestFullscreen()
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen()
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen()
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen()
+  }
+}
+// 当前处于全屏的元素
+const fullEle = () => {
+  return document.fullscreenElement || document.mozFullScreenElement || document.msFullScreenElement || document.webkitFullScreenElement || null
+}
+const isFull = () => {
+  return !!fullEle()
+}
+const toggle = () => {
+  // isFull() ? exit() : enter()
+  isFull() ? enter() : enter()
+}
+
 
 // 请求接口获取员工信息数据
 const getData = async () => {
@@ -87,7 +113,9 @@ const reset = () => {
   countDown.reset();
 };
 const onFinish = () => {
+  title = ''
   getData()
+  title = '2025年会照片评选结果';
   phbShow = true;//显示排行榜
   djsShow = false;//倒计时隐藏
   // showToast('倒计时结束');
@@ -102,7 +130,8 @@ const onFinish = () => {
   <!-- <van-nav-bar left-arrow left-text="返回"  @click-left="router.back()" title="申请员工证" fixed :border="false"></van-nav-bar> -->
     <div class="bg">
       <div class="content">
-        <div class="title animate__animated animate__zoomInDown" style="text-align: center;">{{ title }}</div>
+        <!-- <button @click="toggle">切换全屏</button> -->
+        <div class="title animate__animated animate__zoomInDown" v-if="title" style="text-align: center;">{{ title }}</div>
         <!-- 活动介绍 -->
         <div class="activities" v-if="activeShow">
           <van-row class="list-row">
@@ -110,7 +139,7 @@ const onFinish = () => {
               <div class="list-item">
                   <h3 class=" animate__animated animate__slideInLeft">活动介绍</h3>
                   <p class=" animate__animated animate__slideInUp">员工拍摄年会现场照片，附文字说明或感受，发布到企信通平台圈子，集赞赢好礼。</p>
-                  <h3 class=" animate__animated animate__jackInTheBox">活动规则</h3>
+                  <h3 class=" animate__animated animate__fadeInRightBig">活动规则</h3>
                   <div class=" animate__animated animate__zoomInUp">
                     <p>1、确保企信通圈子用户名真实有效。</p>
                     <p>2、企信通圈子内照片根据集赞数,选出前三位。</p>
@@ -120,7 +149,7 @@ const onFinish = () => {
             </van-col>
             <van-col span="12">
               <div class="list-item">
-                <h3 style="text-align: center; margin-bottom: 10px;" class=" animate__animated animate__rubberBand">企信通</h3>
+                <h3 style="text-align: center; margin-bottom: 10px;" class=" animate__animated animate__rotateInDownLeft">企信通</h3>
                 <img src="@/assets/images/qxt-nh.png" alt="" class=" animate__animated animate__rotateIn" style="width: 50%; border-radius: 50%; padding: 20px; background: #fff;">
                 <p style="text-align: center;" class=" animate__animated animate__slideInRight">扫码进入年会圈子</p>
               </div>
@@ -128,7 +157,7 @@ const onFinish = () => {
           </van-row>
           <div class=" animate__animated animate__slideInUp">
             <!-- <span @click="start">倒计时</span> -->
-            <van-button type="success" size="mini" color="linear-gradient(to right, #59b6d7, #008eff)" @click="start"><span>倒计时 </span></van-button>
+            <van-button type="success" size="mini" color="linear-gradient(to right, #fa6e19, #c72614)" @click="start"><span>倒计时 </span></van-button>
           </div>
         </div>
         <!-- 排行榜列表 -->
@@ -143,7 +172,7 @@ const onFinish = () => {
           </van-col>
           <!-- 获奖列表 -->
            <template v-if="activeList.length > 0">
-              <van-col span="24" v-for="(item,index) in activeList" :key="index">
+              <van-col span="24" v-for="(item,index) in activeList" :key="index"  class=" animate__animated animate__fadeInUp">
                 <van-row>
                   <van-col span="4" style="text-align: center;">
                     <div class="num">
@@ -160,9 +189,15 @@ const onFinish = () => {
                   </van-col>
                   <van-col span="6" style="text-align: center;">
                       <div class="jpImg">
-                        <img src="@/assets/images/jp01.jpg" v-if="index == 0" width="150" height="100" alt="" >
-                        <img src="@/assets/images/jp02.jpg" v-if="index == 1" width="150" height="100" alt="" >
-                        <img src="@/assets/images/jp03.jpg" v-if="index == 2" width="150" height="100" alt="" >
+                        <img :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px;" >
+                        <!-- <van-image
+                          width="auto"
+                          height="100"
+                          fit="fill"
+                          :src="item.images[0].url"
+                        /> -->
+                        <!-- <img src="@/assets/images/jp02.jpg" v-if="index == 1" width="150" height="100" alt="" >
+                        <img src="@/assets/images/jp03.jpg" v-if="index == 2" width="150" height="100" alt="" > -->
                       </div>
                   </van-col>
                 </van-row>
@@ -290,10 +325,10 @@ const onFinish = () => {
     margin: 5px auto;
     padding-left: 20px;
     .title{
-      margin-top: 10px;
+      margin-top: 20px;
       font-size: 12px;
       font-weight: bold;
-      // margin-bottom: 5px;
+      margin-bottom: 5px;
     }
     // 活动介绍
     .activities{
@@ -323,7 +358,7 @@ const onFinish = () => {
         // background-color: #4CAF50;
         border: none;
         border-radius: 15px;
-        box-shadow: 0 2px #c0ba6c;
+        box-shadow: 0 2px #f5941b96;
         &:hover {
           background-color: #a87b1a
         }
@@ -335,8 +370,8 @@ const onFinish = () => {
           right: 0;
         }
         &:active {
-          background-color: #7e867e;
-          box-shadow: 0 1px #666;
+          background-color: #f5941b96;
+          box-shadow: 0 1px #f5941b96;
           transform: translateY(3px);
         }
         span {
@@ -434,7 +469,7 @@ const onFinish = () => {
         .xzImg{
           width: 200%;
           position: absolute;
-          animation: rotate 2s linear infinite; /* 2秒完成一次旋转，线性速度，无限次循环 */
+          animation: rotate 1.5s linear infinite; /* 2秒完成一次旋转，线性速度，无限次循环 */
         }
       }
     }
