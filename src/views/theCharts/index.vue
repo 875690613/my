@@ -1,8 +1,7 @@
 <script setup>
 import { onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { showToast } from 'vant';
-import { Button } from 'vant';
+import { showToast,showImagePreview,Button,Popup } from 'vant';
 import request from '@/utils/request';
 import axios from 'axios';
 //导入stylesheet.css
@@ -18,6 +17,7 @@ let statusType = $ref()
 let userInfo = $ref({});
 let photoFile = $ref('');
 let qrcode = $ref('');//二维码
+let awardMessage = $ref('');//获奖寄语
 let show = $ref(false);
 let djsShow = $ref(false);//倒计时
 let phbShow = $ref(false);//排行榜
@@ -36,7 +36,6 @@ const onLoad = () => {
 const onRefresh = () => {
   console.log('onRefresh...')
   userInfo = {};
-  // getData();
 }
 
 const queryParams = reactive({
@@ -47,7 +46,6 @@ const goOrderDetail = (orgId) => {
 };
 
 onMounted(() => {
-  getData();
   
  
 });
@@ -88,14 +86,6 @@ const getData = async () => {
   }).then(res => {
     console.log("排行榜：",res.data);
     activeList = res.data
-  //   .map(item => {
-  //     if (item.id === 1) {
-  //       item.active = true;
-  //     } else {
-  //       item.active = false;
-  //     }
-
-  // })
   //比较activeList中的数据，如果user_id 相同，则比较like_count的值，留下likecount值大的数据
   const filteredData = activeList.reduce((maxItem, currentItem) => {
   if (currentItem.user_id === maxItem.user_id && currentItem.like_count > maxItem.like_count) {
@@ -103,7 +93,6 @@ const getData = async () => {
     }
     return maxItem;
   }, activeList[0]);
-  // activeList.push(filteredData)
   //将filteredData 添加到activeList中
   activeList.push(filteredData)
   // activeList中如果user_id相同去重
@@ -128,7 +117,6 @@ const start = () => {
   
   activeShow = false;
   // countDown.start();
-  // getData()
 
 };
 const pause = () => {
@@ -140,16 +128,30 @@ const reset = () => {
 const onFinish = () => {
   title = false;
   title2 = true;
+  getData()
   phbShow = true;//显示排行榜
   djsShow = false;//倒计时隐藏
   // showToast('倒计时结束');
 }
-
-
+const showPopup = (item,index) => {
+  console.log("item:",item,index);
+  if (index == 0) {
+    awardMessage = '冠军之路从不平坦，你们的努力和坚持值得所有的赞誉。'
+  }
+  if (index == 1) {
+    awardMessage = '亚军同样闪耀，你们的努力和进步值得赞扬。。'
+  }
+  if (index == 2) {
+    awardMessage = '季军也是荣誉的象征，你们的贡献值得尊敬和认可。'
+  }
+  show = true
+  qrcode = item.images[0].url
+  
+};
 
 
 </script>
-
+<!-- <van-popup v-model:show="show" :style="{ padding: '64px' }">内容</van-popup> -->
 <template>
   <!-- <van-nav-bar left-arrow left-text="返回"  @click-left="router.back()" title="申请员工证" fixed :border="false"></van-nav-bar> -->
     <div class="bg">
@@ -169,6 +171,7 @@ const onFinish = () => {
                     <p>1、确保企信通圈子用户名真实有效。</p>
                     <p>2、企信通圈子内照片根据集赞数,选出前三位。</p>
                     <p>3、集赞数相同,根据发布时间先后进行排名。</p>
+                    <p>4、每位用户仅限一个作品参与评选。</p>
                   </div>
               </div>
             </van-col>
@@ -180,43 +183,43 @@ const onFinish = () => {
               </div>
             </van-col>
           </van-row>
-          <div class=" animate__animated animate__slideInUp">
+          <div class="animate__animated animate__slideInUp" style="margin-top: -30px; margin-left: -20px;">
             <!-- <span @click="start">倒计时</span> -->
             <van-button type="success" size="mini" color="linear-gradient(to right, #fa6e19, #c72614)" @click="start"><span>倒计时 </span></van-button>
           </div>
         </div>
         <!-- 排行榜列表 -->
         <van-row class="list-row" v-if="phbShow">
-          <van-col span="24">
+          <van-col span="24" style="margin-bottom: 60px;">
             <van-row>
-              <van-col span="4" class="titleName" style="">排名</van-col>
-              <van-col span="10" class="titleName">获奖者</van-col>
-              <van-col span="4" class="titleName">获赞数</van-col>
-              <van-col span="6" class="titleName">作品</van-col>
+              <van-col span="3" class="titleName" style="">排名</van-col>
+              <van-col span="7" class="titleName">获奖者</van-col>
+              <van-col span="5" class="titleName">作品</van-col>
+              <van-col span="3" class="titleName">获赞数</van-col>
+              <van-col span="6" class="titleName">奖品</van-col>
             </van-row>
           </van-col>
           <!-- 获奖列表 -->
            <template v-if="activeList.length > 0">
               <van-col span="24" v-for="(item,index) in activeList.slice(0, 3)" :key="index"  class=" animate__animated animate__fadeInUp">
                 <van-row>
-                  <van-col span="4" style="text-align: center;">
+                  <!-- 排名 -->
+                  <van-col span="3" style="text-align: center;">
                     <div class="num">
                       <img class="animate__animated animate__bounceInDown" src="@/assets/images/phb_1.png" v-if="index == 0" alt="" style="width: 50%;">
                       <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-if="index == 1" alt="" style="width: 50%;">
                       <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_3.png" v-if="index == 2" alt="" style="width: 50%;">
                       <!-- <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-else style="width: 50%;"> -->
-                      <span style="margin-top: -3px; font-weight: bold;">{{ index + 1 }}</span>
+                      <span style="margin-top: -3px; font-weight: bold; font-size: 40px;">{{ index + 1 }}</span>
                     </div>
                   </van-col>
-                  <van-col span="10" class="name" v-if="item.creator.realName">{{ item.creator.deptName }}{{ item.creator.realName }}</van-col>
-                  <van-col span="10" class="name" v-else>{{ item.creator.name }}</van-col>
-                  <van-col span="4" class="zan">
-                    <span class="zanColor">{{item.like_count}}</span>
-                    <!-- <span class="time">截止:18:33:45</span> -->
-                  </van-col>
-                  <van-col span="6" style="text-align: center;">
-                      <div class="jpImg">
-                        <img class="animate__animated animate__zoomInUp" :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px;" >
+                  <!-- 获奖者 -->
+                  <van-col span="7" class="name" v-if="item.creator.realName">{{ item.creator.deptName }}{{ item.creator.realName }}</van-col>
+                  <van-col span="7" class="name" v-else>{{ item.creator.name }}</van-col>
+                  <!-- 作品 -->
+                  <van-col span="5" style="text-align: center;">
+                      <div class="jpImg" @click="showPopup(item,index)">
+                        <img class="animate__animated animate__zoomInUp" :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px; cursor: pointer;" >
                         <!-- <van-image
                           width="auto"
                           height="100"
@@ -227,6 +230,14 @@ const onFinish = () => {
                         <img src="@/assets/images/jp03.jpg" v-if="index == 2" width="150" height="100" alt="" > -->
                       </div>
                   </van-col>
+                  <!-- 点赞数 -->
+                  <van-col span="3" class="zan">
+                    <span class="zanColor">{{item.like_count}}</span>
+                    <!-- <span class="time">截止:18:33:45</span> -->
+                  </van-col>
+                  <van-col span="6" class="name" v-if="index == 0">公牛插座台灯</van-col>
+                  <van-col span="6" class="name" v-if="index == 1">防护型耐热玻璃水杯</van-col>
+                  <van-col span="6" class="name" v-if="index == 2">定制地毯</van-col>
                 </van-row>
               </van-col>
            </template>
@@ -318,13 +329,14 @@ const onFinish = () => {
       
       
       <!-- 弹出层员工二维码 -->
-      <van-popup v-model:show="show" :style="{ padding: '0px' }">
+      <van-popup v-model:show="show"   close-icon-position="top-right" :style="{ padding: '0px',background:'#eee'}">
+        <p class="bgText" style="" v-if="false">{{ awardMessage }}</p>
         <div style="display: flex; justify-content: space-around;">
-          <van-image
+          <img
           v-if="qrcode"
-          width="300"
-          height="300px!important"
+          height="600px!important"
           :src="qrcode"
+          style="z-index: 1;"
           @click="getQrcode"
           />
         </div>
@@ -348,7 +360,7 @@ const onFinish = () => {
   color: #fff;
   font-family: '微软雅黑', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   .content{
-    width: 230px;
+    width: 250px;
     margin: 5px auto;
     padding-left: 20px;
     .title{
@@ -365,8 +377,9 @@ const onFinish = () => {
       .list-item{
         h3{
           font-size: 8px;
-          margin-top: 10px;
+          margin-top: 7px;
           text-align: left;
+          margin-bottom: 1px;
         }
         p{
           font-size: 5px;
@@ -427,7 +440,7 @@ const onFinish = () => {
         font-size: 6px;
       }
       .van-col--24{
-        margin-bottom: 4px;
+        margin-bottom: 8px;
       }
       .num{
         position: relative;
@@ -455,7 +468,7 @@ const onFinish = () => {
         .zanColor{
           // color: #01f82a;
           font-weight: bold;
-          font-size: 10px;;
+          font-size: 10px;
         }
         .time{
           font-size: 8px;
@@ -505,6 +518,28 @@ const onFinish = () => {
       }
     }
   }
+}
+//弹窗
+.van-popup__close-icon--top-right{
+  top: 0!important;
+  right: 0!important;
+  font-size: 0.8rem!important;
+}
+.van-icon-close:before,.van-icon:before{
+  font-size: 40!important;
+  color: #fff!important;
+}
+.bgText{
+  width: 100%;
+  font-weight: bold;
+  color: #c72915;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-shadow: 0px 1.2px 1px #d1af65; /* 水平阴影，模糊半径为 4px，透明度为 50% */
+
 }
 /* 定义旋转动画的关键帧 */
 @keyframes rotate {
