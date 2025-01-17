@@ -9,7 +9,7 @@ import 'animate.css';
 import {removeEmptyProps,generatehashcode} from '@/utils/common';
 import { v4 as uuidv4 } from 'uuid';
 const uuid = uuidv4();
-document.title = '排行榜';
+document.title = '年会照片排行榜';
 
 const router = useRouter();
 let loading = $ref(false)
@@ -46,7 +46,10 @@ const goOrderDetail = (orgId) => {
 };
 
 onMounted(() => {
-  
+  console.log("是否全屏：",isFull());
+  if (isFull() == false) {
+    enter()
+  }
  
 });
 // 检测浏览器是否全屏
@@ -62,6 +65,17 @@ const enter = () => {
     element.msRequestFullscreen()
   }
 }
+const exit = () => {
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen()
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen()
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen()
+  }
+}
 // 当前处于全屏的元素
 const fullEle = () => {
   return document.fullscreenElement || document.mozFullScreenElement || document.msFullScreenElement || document.webkitFullScreenElement || null
@@ -70,8 +84,8 @@ const isFull = () => {
   return !!fullEle()
 }
 const toggle = () => {
-  // isFull() ? exit() : enter()
-  isFull() ? enter() : enter()
+  isFull() ? exit() : enter()
+  // isFull() ? enter() : enter()
 }
 
 
@@ -157,8 +171,8 @@ const showPopup = (item,index) => {
     <div class="bg">
       <div class="content">
         <!-- <button @click="toggle">切换全屏</button> -->
-        <div class="title animate__animated animate__zoomInDown" v-if="title" style="text-align: center;">2025年会照片评选活动</div>
-        <div class="title animate__animated animate__fadeInDown" v-if="title2" style="text-align: center;">2025年会照片评选结果</div>
+        <div class="title animate__animated animate__zoomInDown" @click="toggle" v-if="title" style="text-align: center;">2025年会照片评选活动</div>
+        <div class="title animate__animated animate__fadeInDown" @click="toggle" v-if="title2" style="text-align: center;">2025年会照片评选结果</div>
         <!-- 活动介绍 -->
         <div class="activities" v-if="activeShow">
           <van-row class="list-row">
@@ -190,7 +204,7 @@ const showPopup = (item,index) => {
         </div>
         <!-- 排行榜列表 -->
         <van-row class="list-row" v-if="phbShow">
-          <van-col span="24" style="margin-bottom: 60px;">
+          <van-col span="24" class="tableName">
             <van-row>
               <van-col span="3" class="titleName" style="">排名</van-col>
               <van-col span="7" class="titleName">获奖者</van-col>
@@ -368,7 +382,7 @@ const showPopup = (item,index) => {
       margin-top: 20px;
       font-size: 12px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       text-shadow: 0px 1.5px 1px #d1af65; /* 水平阴影，模糊半径为 4px，透明度为 50% */
     }
     // 活动介绍
@@ -434,6 +448,9 @@ const showPopup = (item,index) => {
     }
     // 排行榜
     .list-row{
+      .tableName{
+        margin-bottom: 10px!important;
+      }
       .titleName{
         text-align: center;
         font-weight: bold;
@@ -541,6 +558,21 @@ const showPopup = (item,index) => {
   text-shadow: 0px 1.2px 1px #d1af65; /* 水平阴影，模糊半径为 4px，透明度为 50% */
 
 }
+// 宽度小于 1024px
+@media screen and (max-width: 1024px) {
+  
+}
+// 宽度小于 1280px
+@media screen and (max-width: 1280px) {
+  // .bg{
+  //   .content{
+  //     .title{
+  //       margin-top: 8%;
+  //     }
+  //   }
+  // }
+}
+
 /* 定义旋转动画的关键帧 */
 @keyframes rotate {
   from {
