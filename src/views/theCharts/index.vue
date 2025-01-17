@@ -197,7 +197,7 @@ const showPopup = (item,index) => {
               </div>
             </van-col>
           </van-row>
-          <div class="animate__animated animate__slideInUp" style="margin-top: -30px; margin-left: -20px;">
+          <div class="timeBtn animate__animated animate__slideInUp">
             <!-- <span @click="start">倒计时</span> -->
             <van-button type="success" size="mini" color="linear-gradient(to right, #fa6e19, #c72614)" @click="start"><span>倒计时 </span></van-button>
           </div>
@@ -220,20 +220,20 @@ const showPopup = (item,index) => {
                   <!-- 排名 -->
                   <van-col span="3" style="text-align: center;">
                     <div class="num">
-                      <img class="animate__animated animate__bounceInDown" src="@/assets/images/phb_1.png" v-if="index == 0" alt="" style="width: 50%;">
-                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-if="index == 1" alt="" style="width: 50%;">
-                      <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_3.png" v-if="index == 2" alt="" style="width: 50%;">
+                      <img class="ranking_icon animate__animated animate__bounceInDown" src="@/assets/images/phb_1.png" v-if="index == 0" alt="">
+                      <img class="ranking_icon animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-if="index == 1" alt="">
+                      <img class="ranking_icon animate__animated animate__rotateIn" src="@/assets/images/phb_3.png" v-if="index == 2" alt="">
                       <!-- <img class="animate__animated animate__rotateIn" src="@/assets/images/phb_2.png" v-else style="width: 50%;"> -->
-                      <span style="margin-top: -3px; font-weight: bold; font-size: 40px;">{{ index + 1 }}</span>
+                      <span class="ranking" style="">{{ index + 1 }}</span>
                     </div>
                   </van-col>
                   <!-- 获奖者 -->
                   <van-col span="7" class="name" v-if="item.creator.realName">{{ item.creator.deptName }}{{ item.creator.realName }}</van-col>
                   <van-col span="7" class="name" v-else>{{ item.creator.name }}</van-col>
                   <!-- 作品 -->
-                  <van-col span="5" style="text-align: center;">
+                  <van-col span="5" style="text-align: center; display: flex; align-items: center; justify-content: center; ">
                       <div class="jpImg" @click="showPopup(item,index)">
-                        <img class="animate__animated animate__zoomInUp" :src="item.images[0].url" alt="" height="100" style="width: 100%; max-width: 150px; cursor: pointer;" >
+                        <img class="works animate__animated animate__zoomInUp" :src="item.images[0].url" alt="">
                         <!-- <van-image
                           width="auto"
                           height="100"
@@ -252,6 +252,16 @@ const showPopup = (item,index) => {
                   <van-col span="6" class="name" v-if="index == 0">公牛插座台灯</van-col>
                   <van-col span="6" class="name" v-if="index == 1">防护型耐热玻璃水杯</van-col>
                   <van-col span="6" class="name" v-if="index == 2">定制地毯</van-col>
+                </van-row>
+              </van-col>
+           </template>
+           <template v-else>
+              <van-col span="24" class=" animate__animated animate__fadeInUp">
+                <van-row>
+                  <!-- 排名 -->
+                  <van-col span="24" style="text-align: center;">
+                    正在评选中,请耐心等待！
+                  </van-col>
                 </van-row>
               </van-col>
            </template>
@@ -348,7 +358,7 @@ const showPopup = (item,index) => {
         <div style="display: flex; justify-content: space-around;">
           <img
           v-if="qrcode"
-          height="600px!important"
+          class="popupImg"
           :src="qrcode"
           style="z-index: 1;"
           @click="getQrcode"
@@ -399,6 +409,9 @@ const showPopup = (item,index) => {
           font-size: 5px;
           text-align: left;
         }
+      }
+      .timeBtn{
+        margin-left: -20px;
       }
       .van-button--mini{
         position: relative;
@@ -461,12 +474,19 @@ const showPopup = (item,index) => {
       }
       .num{
         position: relative;
+        .ranking_icon{
+          width: 60%;
+          max-width: 15px;
+        }
         >span{
           color: #c72915;
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%,-50%);
+          font-weight: bold;
+          font-size: 8px;
+          margin-top: -1px;
         }
       }
       .zan,.name{
@@ -495,9 +515,22 @@ const showPopup = (item,index) => {
         }
       }
       .jpImg{
+        width: 70%;
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+        .works{
+          transition: transform 1s ease;
+          width: 100%;
+          max-width: 100%;
+          height: 22px;
+          cursor: pointer;
+          &:hover{
+              transform: scale(1.2);
+              transition: transform 1s ease;
+          }
+        }
       }
     }
     // 倒计时
@@ -537,6 +570,10 @@ const showPopup = (item,index) => {
   }
 }
 //弹窗
+.popupImg{
+  width: 100%;
+  height: 100px!important;
+}
 .van-popup__close-icon--top-right{
   top: 0!important;
   right: 0!important;
@@ -564,13 +601,40 @@ const showPopup = (item,index) => {
 }
 // 宽度小于 1280px
 @media screen and (max-width: 1280px) {
-  // .bg{
-  //   .content{
-  //     .title{
-  //       margin-top: 8%;
-  //     }
-  //   }
-  // }
+  .bg{
+    .content{
+      .title{
+        margin-top: 8%;
+        margin-bottom: 2%;
+      }
+      // 活动介绍
+      .activities{
+        .list-item{
+          h3{
+            font-size: 30px;
+          }
+          p{
+            font-size: 18px;
+            margin-bottom: 5px;
+            
+          }
+        }
+      }
+      // 排行榜
+      .list-row{
+        .tableName{
+          margin-bottom: 10px!important;
+        }
+        .titleName{
+          font-size: 24px;
+          margin-bottom: 5%;
+        }
+        .van-col--24{
+          margin-bottom: 5%;
+        }
+      }
+    }
+  }
 }
 
 /* 定义旋转动画的关键帧 */
