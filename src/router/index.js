@@ -229,5 +229,14 @@ const router = createRouter({
     ...extendRoutes
   ]
 })
+const hasRedirected = localStorage.getItem('hasRedirected');
 
+router.beforeEach((to, from, next) => {
+  if (to.path === '/' && !hasRedirected) {
+    localStorage.setItem('hasRedirected', true);
+    next('/HomeView');
+  } else {
+    next();
+  }
+});
 export default router

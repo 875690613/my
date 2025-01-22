@@ -516,20 +516,23 @@ const showPopup = (item,index) => {
       }
       .jpImg{
         width: 70%;
+        // max-width: 25px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         .works{
-          transition: transform 1s ease;
+          // transition: transform 1s ease;
           width: 100%;
           max-width: 100%;
           height: 22px;
           cursor: pointer;
-          &:hover{
-              transform: scale(1.2);
-              transition: transform 1s ease;
-          }
+        }
+        &:hover{
+          transition: transform 1s ease;
+          transform: scale(1.2);
+          //旋转360度
+            // transform: rotate(360deg);
         }
       }
     }
