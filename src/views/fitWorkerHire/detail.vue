@@ -15,7 +15,7 @@ let listData = $ref([
   {
     jobId :  0,
     jobName: '试穿模特（接受小白）',
-    provideSalaryString: '4K-6K',
+    provideSalaryString: '350元/天',
     brandName: "江阴逐日信息科技有限公司",
     jobDegree :  "高中",
     jobExperience :  "经验不限",
@@ -47,7 +47,7 @@ let listData = $ref([
     jobId :  1,
     jobName: '试衣模特',
     brandName: "江阴逐日信息科技有限公司",
-    provideSalaryString: '6K-9K/月',
+    provideSalaryString: '500元/天',
     jobDegree :  "本科",
     jobExperience :  "经验不限",
     jobLabels:["1-2年", "大专"],
@@ -78,7 +78,7 @@ let listData = $ref([
     jobId :  2,
     jobName: '服装试衣模特',
     brandName: "江阴逐日信息科技有限公司",
-    provideSalaryString: '15K-25K',
+    provideSalaryString: '680元/天',
     jobDegree :  "研究生",
     jobExperience :  "经验不限",
     jobLabels:["1-3年", "本科", "模特", "服装"],
@@ -197,11 +197,11 @@ onMounted(() => {
         </van-col>
         
       </van-row>
+      <div class="email-wrap">
+        <p class="email">有报名意向者可发送模卡及作品至邮箱<br><van-icon name="envelop-o" />：hr@supertexinternational.com</p>
+      </div>
     </template>
   </main>
-  <van-action-bar>
-    <p class="email">投递邮箱：zhuri@bytedance.com</p>
-  </van-action-bar>
 </template>
 
 <style scoped lang="scss">
@@ -271,7 +271,7 @@ onMounted(() => {
 }
 .email{
   text-align: center;
-  padding: 0 20px;
+  padding: 10px 20px;
 }
 .van-col--24{
   margin-bottom: 5px;

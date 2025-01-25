@@ -13,7 +13,7 @@ let listData = $ref([
   {
     jobId :  0,
     jobName: '试穿模特（接受小白）',
-    provideSalaryString: '4K-6K/月',
+    provideSalaryString: '350元/天',
     brandName: "江阴逐日信息科技有限公司",
     jobDegree :  "高中",
     jobExperience :  "经验不限",
@@ -45,7 +45,7 @@ let listData = $ref([
     jobId :  1,
     jobName: '试衣模特',
     brandName: "江阴逐日信息科技有限公司",
-    provideSalaryString: '6K-9K/月',
+    provideSalaryString: '500元/天',
     jobDegree :  "本科",
     jobExperience :  "经验不限",
     jobLabels:["1-2年", "大专"],
@@ -76,7 +76,7 @@ let listData = $ref([
     jobId :  2,
     jobName: '服装试衣模特',
     brandName: "江阴逐日信息科技有限公司",
-    provideSalaryString: '15K-25K/月',
+    provideSalaryString: '680元/天',
     jobDegree :  "研究生",
     jobExperience :  "经验不限",
     jobLabels:["1-3年", "本科", "模特", "服装"],
@@ -123,7 +123,7 @@ const onLoad = () => {
 
 const onRefresh = () => {
   console.log('onRefresh...')
-  listData = [];
+  // listData = [];
   queryParams.page = 1;
   getData();
 }
@@ -145,17 +145,17 @@ onMounted(() => {
 // 请求接口获取列表数据
 const getData = async () => {
   // loading = true;
-  const params = removeEmptyProps(queryParams);
-  const { code, rows, total } = await request.post('/api/myStyle/brandSeriesList', params);
-  if (code == 200) {
+  // const params = removeEmptyProps(queryParams);
+  // const { code, rows, total } = await request.post('/api/myStyle/brandSeriesList', params);
+  // if (code == 200) {
     // 计算finished
     // finished = rows.length < queryParams.limit;
     // 合并数据
     // listData = listData.concat(rows);
-  } else {
-    // 获取数据失败提示
-    showToast("获取数据失败");
-  }
+  // } else {
+  //   // 获取数据失败提示
+  //   showToast("获取数据失败");
+  // }
   loading = false;
   refreshing = false;
 };
