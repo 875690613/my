@@ -57,6 +57,7 @@ export default defineConfig({
     }
   },
   server: {
+    open: true,
     proxy: {
       '/api/machine': {
         target: 'https://z-office.zhuritec.com/api/machine',
@@ -145,6 +146,24 @@ export default defineConfig({
         target: 'https://businessbbs.zhuritec.com/erp_api',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/erp_api/, '')
+      },
+      // 毕业生招聘官--登录
+      '/wx/auth': {
+        target: 'https://zhaopin.supertexfashion.cn/wx/auth',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/wx\/auth/, '')
+      },
+      // 毕业生招聘官
+      '/wx/head': {
+        target: 'https://zhaopin.supertexfashion.cn/wx/head',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/wx\/head/, '')
+      },
+      // 毕业生招聘官-上传
+      '/wx/storage': {
+        target: 'https://zhaopin.supertexfashion.cn/wx/storage',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/wx\/storage/, '')
       },
       // 验证当前人员是否是优秀员工
       // 报名优秀员工体检
