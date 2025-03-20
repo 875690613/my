@@ -31,12 +31,12 @@ onMounted(() => {
   // getApplyFor();
  
 });
-// const onRefresh = () => {
-//   console.log('onRefresh...')
-//   listData = [];
-//   queryParams.page = 1;
-//   getData();
-// }
+const onRefresh = () => {
+  console.log('onRefresh...')
+  listData = [];
+  queryParams.page = 1;
+  getData();
+}
 
 const queryParams = reactive({
   page: 0,
@@ -146,11 +146,6 @@ const getApplyFor = async (type) => {
     }
   }
 }
-const onRefresh = () => {
-      setTimeout(() => {
-        showToast('刷新成功');
-      }, 1000);
-    };
 </script>
 
 <template>
