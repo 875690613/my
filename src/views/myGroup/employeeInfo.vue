@@ -221,9 +221,11 @@ const onClickLeft = () => {
   let token = sessionStorage.getItem('myToken')
   console.log("token:",token);
   if(token){
+    console.log('1111111111');
     // 跳转到nav页面
     router.push('/myGroup/nav');
   }else{
+    console.log('2222222222');
     router.back()
   }
 };
@@ -231,32 +233,65 @@ const onClickLeft = () => {
 
 <template>
   <div class="bg">
-    <van-nav-bar left-arrow left-text="返回"  @click-left="onClickLeft" title="申请员工证" fixed :border="false"></van-nav-bar>
+    <van-nav-bar left-arrow left-text="返回"  @click-left="onClickLeft" title="入职查询" fixed :border="false"></van-nav-bar>
     <div class="top-data-group">
-      <div class="top-data-group__top" @click="goOrderDetail(orgId)">
-        {{ userInfo.orgName }}<span style="color: #1989fa; margin-left: 3px;"><van-icon name="arrow-double-right" /></span>
-      </div>
-      <div style="display: flex; justify-content: space-around;">
-
-        <!-- <van-image
-        v-if="userInfo.photoId !=null && userInfo.photoId != '' && userInfo.photoId != undefined"
-        width="100"
-        height="150"
-        :src="photoFile"
-        /> -->
-        <van-image
-        v-if="photoFile"
-        width="100"
-        height="150"
-        :src="photoFile"
-        @click="getQrcode"
-        />
-        <!-- 点击头像获取二维码 -->
-        
-        <van-uploader v-if="photoFile == null || photoFile == '' || photoFile == undefined" v-model="fileList" preview-size="100px" reupload="true" max-count="1" :after-read="afterRead" :before-read="beforeRead"/>
-      </div>
-      <div style="font-size: 12px; text-align: center; color: #999; margin-bottom: 8px;" >点头像查看二维码</div>
+      <van-row  class="top-data-group__top">
+        <van-col span="19" class="statusTxt">
+          <div>
+            <div class="userName">{{ userInfo.userName }}</div>
+            <p>入职2年8个月</p> 
+            <p>2次入职逐日集团</p>
+          </div>
+        </van-col>
+        <van-col span="5" style="display: flex; align-items: center;">
+          <van-image class="myLogo" :src="photoFile" />
+        </van-col>
+          
+      </van-row>
       <van-row class="list-row">
+        <van-col span="24" class="list-row__item"><div class="title">员工信息</div></van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</van-col>
+            <van-col span="18">{{ userInfo.userName }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</van-col>
+            <van-col span="18">{{ userInfo.deptName }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">手&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;机：</van-col>
+            <van-col span="18">{{ userInfo.phone }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">民&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;族：</van-col>
+            <van-col span="18">{{ userInfo.deptName }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">籍&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;贯：</van-col>
+            <van-col span="18">{{ userInfo.deptName }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历：</van-col>
+            <van-col span="18">{{ userInfo.deptName }}</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
+            <van-col span="6">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</van-col>
+            <van-col span="18">{{ userInfo.deptName }}</van-col>
+          </van-row>
+        </van-col>
         <van-col span="24">
           <van-row>
             <van-col span="6">部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门：</van-col>
@@ -271,11 +306,18 @@ const onClickLeft = () => {
         </van-col>
         <van-col span="24">
           <van-row>
-            <van-col span="6">员工名称：</van-col>
+            <van-col span="6">享有年假：</van-col>
             <van-col span="18">{{ userInfo.userName }}</van-col>
           </van-row>
         </van-col>
-        <van-col span="24">
+        <!-- <van-col span="24">
+          <van-row>
+            <van-col span="6">合同描述：</van-col>
+            <van-col span="18">君子食无求饱,居无求安,敏于事而
+              慎于言,就有道而正焉,可谓好学也已。</van-col>
+          </van-row>
+        </van-col> -->
+        <!-- <van-col span="24">
           <van-row>
             <van-col span="6">办&nbsp;&nbsp;公&nbsp;&nbsp;地：</van-col>
             <van-col span="18">{{ userInfo.workspace }}</van-col>
@@ -286,34 +328,9 @@ const onClickLeft = () => {
             <van-col span="6">工&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</van-col>
             <van-col span="18">{{ userInfo.staffNo }}</van-col>
           </van-row>
-        </van-col>
+        </van-col> -->
        
       </van-row>
-      <div style="margin: 16px;">
-        <van-button round block type="primary" :disabled="statusType == true || userInfo.status != undefined" v-if="userInfo.hasCard == false" @click="applyCard">
-        <span v-if="userInfo.status == undefined">申请员工证</span>
-        <span v-if="userInfo.hasCard == false && userInfo.status == 0">待审核{{ statusType }}</span>
-        <span v-if="userInfo.hasCard == false && userInfo.status == 1">审核通过</span>
-        <span v-if="userInfo.hasCard == false && userInfo.status == 2">审核拒绝</span>
-        <span v-if="userInfo.hasCard == false && userInfo.status == 3">审核中</span>
-
-        </van-button>
-        <van-button round block disabled type="primary" v-if="userInfo.hasCard == true">
-        已申请过了
-        </van-button>
-      </div>
-      <!-- 弹出层员工二维码 -->
-      <van-popup v-model:show="show" :style="{ padding: '0px' }">
-        <div style="display: flex; justify-content: space-around;">
-          <van-image
-          v-if="qrcode"
-          width="300"
-          height="300px!important"
-          :src="qrcode"
-          @click="getQrcode"
-          />
-        </div>
-      </van-popup>
     </div>
   </div>
 </template>
@@ -331,38 +348,52 @@ const onClickLeft = () => {
   height: 100%;
   overflow-y: auto;
   padding-top: 46px;
-  .logo{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 46px;
-    .myLogo{
-      max-width: 52.5px;
-      max-height: 75px;
-      overflow: hidden;
-      margin-right: 12.5px;
-    }
-    span{
-      font-family: FZLanTingHei-B-GBK;
-      font-size: 40px;
-      font-variation-settings: "opsz" auto;
-      color: #000000;
-        
-    }
-  }
 }
 .top-data-group {
-  // 固定在顶部，距离顶部100px
-  position: fixed;
-  top: 50px;
-  left: 0;
-  right: 0;
+  padding-top: 28px;
   .top-data-group__top {
-    // background-color: #1989fa;
-    padding: 10px 15px 15px 15px;
+    margin: 0px 16px 15px 16px;
+    padding: 20px;
     text-align: center;
     font-size: 16px;
-    font-weight: bold;
+    color: #333;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #E6F4FF 0%, #FFFFFF 99%);
+    box-sizing: border-box;
+    border: 3px solid #FFFFFF;
+    box-shadow: 0px 10px 30px 0px rgba(198, 211, 226, 0.6);
+    display: flex;
+    justify-content: space-around;
+
+
+    div{
+      // font-weight: bold;
+      font-family: 苹方-简;
+    }
+    .statusTxt{
+      display: flex;
+      align-content: center;
+      text-align: left;
+      justify-content: center;
+      flex-direction: column;
+
+      .userName{
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      p{
+        font-size: 14px;
+      }
+    }
+    .myLogo{
+      width: 100%;
+      max-width: 66px;
+      max-height: 82px;
+      overflow: hidden;
+      border-radius: 4px;
+      // margin-right: 12.5px;
+    }
   }
 }
 
@@ -378,8 +409,15 @@ const onClickLeft = () => {
   box-shadow: 0px 10px 30px 0px rgba(198, 211, 226, 0.6);
   border-radius: 10px;
   height: 100%;
-  margin: 0px 16px 30px 16px;
+  margin: 0px 16px 15px 16px;
   padding: 20px;
+  .title{
+    font-family: 苹方-简;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  //文字两端对齐
   text-align: justify;
   .van-col{
     margin-bottom: 2px;

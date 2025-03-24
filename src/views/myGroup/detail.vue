@@ -44,37 +44,65 @@ onMounted(() => {
 </script>
 
 <template>
-  <van-nav-bar title="公司详情" fixed :border="false" left-arrow left-text="返回" @click-left="router.back()" />
-  <main class="scrollMain">
-    <div v-if="loading" class="loading-wrap">
-      <van-loading>加载中...</van-loading>
-    </div>
-    <template v-else-if="detailData">
-      <div class="top-data-group__top">
-        {{ detailData.companyName }}
+  <div class="bg">
+    <van-nav-bar title="公司详情" fixed :border="false" left-arrow left-text="返回" @click-left="router.back()" />
+    <main class="main">
+      <div v-if="loading" class="loading-wrap">
+        <van-loading>加载中...</van-loading>
       </div>
-      <van-row class="order-info">
-        <van-col span="24">
-          公司类型：
-          <!-- 如果detailData.companyType等于1 表示无限责任公司，等于2 表示有限责任公司，等于3 表示两合公司，等于4 表示股份有限公司，等于5 表示股份两合公司 -->
-           {{ detailData.companyType == 1 ? '无限责任公司' : detailData.companyType == 2 ? '有限责任公司' : detailData.companyType == 3 ? '两合公司' : detailData.companyType == 4 ? '股份有限公司' : detailData.companyType == 5 ? '股份两合公司' : '--' }}
-        </van-col>
-        <van-col span="24">
-          经营范围：{{ detailData.businessScope || '--' }}
-        </van-col>
-        <van-col span="24">
-          成立日期：{{ detailData.establishedDate || '--' }}
-        </van-col>
-        <van-col span="24">
-          公司地址：{{ detailData.companyAddress || '--' }}
-        </van-col>
-      </van-row>
-      
-    </template>
-  </main>
+      <template v-else-if="detailData">
+        <div class="top-data-group__top">
+          {{ detailData.companyName }}
+        </div>
+        <van-row class="order-info">
+          <van-col span="24">
+            公司类型：
+            <!-- 如果detailData.companyType等于1 表示无限责任公司，等于2 表示有限责任公司，等于3 表示两合公司，等于4 表示股份有限公司，等于5 表示股份两合公司 -->
+             {{ detailData.companyType == 1 ? '无限责任公司' : detailData.companyType == 2 ? '有限责任公司' : detailData.companyType == 3 ? '两合公司' : detailData.companyType == 4 ? '股份有限公司' : detailData.companyType == 5 ? '股份两合公司' : '--' }}
+          </van-col>
+          <van-col span="24">
+            经营范围：{{ detailData.businessScope || '--' }}
+          </van-col>
+          <van-col span="24">
+            成立日期：{{ detailData.establishedDate || '--' }}
+          </van-col>
+          <van-col span="24">
+            公司地址：{{ detailData.companyAddress || '--' }}
+          </van-col>
+        </van-row>
+        
+      </template>
+    </main>
+  </div>
 </template>
 
 <style scoped lang="scss">
+.van-nav-bar{
+  background: #ffffff00;
+}
+.bg{
+  background-color: #EDF6FF;
+  background-image: url('@/assets/images/myGroup/bg_top.png'),url('@/assets/images/myGroup/loginBg.png');// no-repeat top center / 100% auto
+  background-position: top, bottom; /* 每张图片的位置 */
+  background-repeat: no-repeat, no-repeat; /* 每张图片的重复方式 */
+  background-size: contain, contain; /* 每张图片的大小 */
+  height: 100%;
+  padding-top: 46px;
+  .main{
+    height: 100%;
+    margin: 0px 16px 15px 16px;
+    padding: 20px;
+    font-size: 16px;
+    color: #333;
+    // border-radius: 10px;
+    background: linear-gradient(180deg, #E6F4FF 0%, #FFFFFF 99%);
+    box-sizing: border-box;
+    border: 3px solid #FFFFFF;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0px 10px 30px 0px rgba(198, 211, 226, 0.6);
+  }
+}
   .top-data-group__top {
     // background-color: #1989fa;
     padding: 10px 15px 15px 15px;

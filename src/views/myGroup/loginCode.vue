@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { showToast } from 'vant';
 import { onMounted } from 'vue';
+import myLogo from '@/assets/images/myGroup/logo.png';
+const router = useRouter();
 let phone = $ref(''); // 17501516805
 let pwd = $ref(''); // 123456
 let codes = $ref(''); // 9527
@@ -11,9 +13,10 @@ let toast = $ref(null)
 let CountdownDisabled = $ref(true)
 let countdown = $ref('发送验证码')
 let second = $ref(0)//倒计时
+let navType = $ref(1)//1:入职查询 2：员工证
+navType = router.currentRoute.value.query.type
 document.title = '我的集团';
 
-const router = useRouter();
 
 onMounted(() => {
   // sessionStorage.clear();
@@ -97,7 +100,13 @@ const onSubmit = async (values) => {
       message: '登录成功',
       className: 'custom-toast',
     })
-    router.push('/myGroup/index');
+    if (navType == 1) {
+      // 路由跳转->员工信息页面
+      router.push('/myGroup/employeeInfo');
+    }else{
+      // 路由跳转->员工证
+      router.push('/myGroup/index');
+    }
     
     // 缓存token
     sessionStorage.setItem('myToken', data);
@@ -116,9 +125,22 @@ const onSubmit = async (values) => {
 
 <template>
   <div class="mainContent">
-    <van-nav-bar title="登录" fixed :border="false" />
+    <van-nav-bar @click-left="router.back()" left-text="返回" left-arrow="true" :title="navType == 1 ? '入职查询' : '员工证件'" fixed :border="false" />
+    <div class="logo">
+      <van-image class="myLogo" :src="myLogo" />
+      <span>逐日集团</span>
+    </div>
     <main>
-      <div class="login-title"></div>
+      <div class="login-title">
+        <template v-if="navType == 1">
+          <div>入职查询</div>
+          <p>员工入职信息查询</p>
+        </template>
+        <template v-if="navType == 2">
+          <div>员工证</div>
+          <p>员工证件申请、查看</p>
+        </template>
+      </div>
       <van-form @submit="onSubmit">
           <van-cell-group inset>
               <van-field
@@ -157,7 +179,7 @@ const onSubmit = async (values) => {
               </template>
             </van-field>
           </van-cell-group>
-          <div style="margin: 16px;">
+          <div style="margin: 60px 16px 0 16px;">
               <van-button round block type="primary" native-type="submit">
               登录
               </van-button>
@@ -170,14 +192,56 @@ const onSubmit = async (values) => {
   </div>
 </template>
 
-<style scoped>
-
+<style scoped lang="scss">
+.van-nav-bar{
+  background: #ffffff00;
+}
+.mainContent{
+  background-color: #EDF6FF;
+  background-image: url('@/assets/images/myGroup/bg_top.png'),url('@/assets/images/myGroup/loginBg.png');// no-repeat top center / 100% auto
+  background-position: top, bottom; /* 每张图片的位置 */
+  background-repeat: no-repeat, no-repeat; /* 每张图片的重复方式 */
+  background-size: contain, contain; /* 每张图片的大小 */
+  height: 100%;
+  overflow-y: auto;
+  padding-top: 46px;
+  .logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 46px;
+    .myLogo{
+      max-width: 52.5px;
+      max-height: 75px;
+      overflow: hidden;
+      margin-right: 12.5px;
+    }
+    span{
+      font-family: FZLanTingHei-B-GBK;
+      font-size: 40px;
+      font-variation-settings: "opsz" auto;
+      color: #000000;
+        
+    }
+  }
+}
 .login-title {
-  font-size: 22px;
-  color: #666666;
+  font-size: 23px;
+  color: #000;
+  font-family: 苹方-简;
   text-align: center;
-  margin: 16px;
-  padding: 40px 20px 60px 20px;
+  font-weight: 600;
+  margin: 20px;
+  padding: 40px 20px 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+
+  p{
+    margin-left: 15px;
+    font-size: 16px;
+  }
 
 }
 .van-count-down {
