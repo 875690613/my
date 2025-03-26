@@ -71,7 +71,7 @@ const goList = () => {
 
 onMounted(() => {
   // 测试调试代码
-  localStorage.setItem('Authorization', '230069');
+  // localStorage.setItem('Authorization', '230069');
 })
 
 onUnmounted(() => {

@@ -15,7 +15,7 @@ const phone = $ref(sessionStorage.getItem('userPhone') || '',);
 
 const onLoad = () => {
   console.log('onLoad...')
-  getData();
+  // getData();
 }
 
 

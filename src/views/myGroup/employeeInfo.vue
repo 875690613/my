@@ -3,27 +3,18 @@ import { onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import request from '@/utils/request';
 import {removeEmptyProps,generatehashcode} from '@/utils/common';
-import { v4 as uuidv4 } from 'uuid';
-const uuid = uuidv4();
+import { load } from "@amap/amap-jsapi-loader";
+import { Loading } from 'vant';
 document.title = '申请员工证';
 
 const router = useRouter();
 let loading = $ref(false)
-let statusType = $ref()
 let userInfo = $ref({});
 let photoFile = $ref('');
-let qrcode = $ref('');//二维码
-let upLoadPhoto = $ref('');
 let orgId = $ref('');
-const fileList = $ref([]);
-const photos = $ref([]);
-const files = $ref();
+let eduList = $ref([]);//学历
 const phone = $ref(sessionStorage.getItem('userPhone') || '',);
-const uploadfileData = $ref(
-  {
-    hashcode: [] // 文件生成的hashcode
-  }
-);
+
 let show = $ref(false);
 
 
@@ -49,16 +40,22 @@ const goOrderDetail = (orgId) => {
 
 onMounted(() => {
   getData();
+  getEdu();
  
 });
 
 // 请求接口获取员工信息数据
 const getData = async () => {
   loading = true;
+  console.log("token:",sessionStorage.getItem('myToken'));
+  queryParams.phone = '';
   const params = removeEmptyProps(queryParams);
-  const { status, data, message} = await request.get('/api/oa/user/apply/card/getUserInfoByPhone', params, {
+  params.SystemId = 'qxt';
+  const { status, data, message} = await request.get('/api/third/user/getUserInfo','', {
     headers: {
-      Authorization: sessionStorage.getItem('myToken')
+      Authorization: sessionStorage.getItem('myToken'),
+      systemid: 'qxt',
+      
     }
   });
   if (status == 200) {
@@ -68,18 +65,10 @@ const getData = async () => {
     orgId = data.orgId
     userInfo = data
     //如果有照片id就获取照片，说明申请通过了
-    if (userInfo.photoId) {
-        // 如果员工证申请通过则清除缓存头像
-        localStorage.removeItem('photoFile')
-        localStorage.removeItem('ids')
+    if (userInfo.photoFileId) {
         getPhotoFile()//获取头像
     }else{
-      let localPhotoFile = localStorage.getItem('photoFile')
-      // 如果有缓存头像就显示缓存头像
-      if(localPhotoFile){
-        photoFile = localPhotoFile
-        // console.log("缓存中获取photoFile:",photoFile);
-      }
+      
     }
   } else {
     // 获取数据失败提示
@@ -89,6 +78,21 @@ const getData = async () => {
   }
   loading = false;
 };
+// 请求接口获取学历信息数据
+const getEdu = async () => {
+  const  data = await request.get('/api/admin/baseDic/queryByType/EDUCATION','', {
+    headers: {
+      Authorization: sessionStorage.getItem('myToken'),
+      // systemid: 'qxt',
+      
+    }
+  });
+  // 将数组data的值赋给eduList数组中，并去重合并
+  if (data.length > 0) {
+    eduList = data;
+  }
+  console.log('学历：', eduList);
+};
 
 // 获取员工头像
 const getPhotoFile = async () => {
@@ -96,85 +100,13 @@ const getPhotoFile = async () => {
   const params = {
     // photoFileId: userInfo.photoId
   }
-  const res = await request.get('/api/admin/baseFile/showPic/'+ userInfo.photoId,params, {
+  const res = await request.get('/api/admin/baseFile/showPic/'+ userInfo.photoFileId,params, {
     headers: {
       Authorization: sessionStorage.getItem('myToken')
     }
   });
   photoFile ='data:image/jpeg;base64,'+ res;
 };
-const showPopup = () => {
-  show = true;
-};
-// 获取员工二维码
-const getQrcode = async () => {
-  // const params = removeEmptyProps(userInfo);
-  const params = {
-    // photoFileId: userInfo.photoId
-  }
-  const data = await request.get('/api/oa/personnelArchives/qrcode',params, {
-    headers: {
-      Authorization: sessionStorage.getItem('myToken')
-    }
-  });
-  // qrcode ='data:image/jpeg;base64,'+ res;
-  qrcode = data.data;
-  show = true;
-};
-// 上传头像前处理
-const beforeRead = (file) => {
-  console.log("上传头像前处理:",file);
-  if (file.type !== 'image/jpeg' && file.type !== 'image/jpg' && file.type !== 'image/png') {
-    showToast('请上传 jpg、jpeg、png 格式图片');
-    return false;
-  }
-  return true;
-};
-const afterRead = async (file) => {
-  console.log("上传file:",file,file.content);
-  //将file.content 放在缓存photoFile中
-  localStorage.setItem('photoFile', file.content)
-  uploadfileData.files = files
-  fileList.forEach(v=> {
-    let o = {
-        base64Str: v.content,
-        filename: v.file.name
-    }
-    photos.push(o)
-})
-  console.log("photos:",photos);
-  // 把file.content转成binary
-  const binary = await base64ImgtoFile(file.content, file.name)
-  uploadPhone(binary)
-}
-// 上传接口
-const uploadPhone = async (file) => {
-  const params = removeEmptyProps(queryParams);
-  // const hashcode = await generatehashcode(file);
-  // 把uploadfileData包装成FormData
-  const formdata = new FormData();
-  formdata.append('files', file);
-  formdata.append('hashcode', uuid)
-  
-  const { result, fileNames,msg,ids } = await request.post('/api/admin/baseFile/upload', formdata, {
-    headers: {
-      Authorization: sessionStorage.getItem('myToken'),
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-  if (result == 'success') {
-    upLoadPhoto = fileNames[0]
-    localStorage.setItem('ids', ids[0])
-    console.log("上传成功:",upLoadPhoto);
-    // 获取员工信息
-    // getData();
-  } else {
-    // 获取数据失败提示
-    showToast(msg);
-  }
-  loading = false;
-};
-
 // base64转文件
 const base64ImgtoFile = async (dataurl, filename = 'file') => {
   const arr = dataurl.split(',')
@@ -190,32 +122,7 @@ const base64ImgtoFile = async (dataurl, filename = 'file') => {
     type: mime
   })
 }
-// 申请员工证
-const applyCard = async () => {
-  // if(userInfo.photoId == null || userInfo.photoId == '' || userInfo.photoId == undefined){
-  if(userInfo.photoId == undefined){
-    if(upLoadPhoto == '' ){
-      showToast("请上传员工照片");
-      return false;
-    }
-  }
-  userInfo.photoId = localStorage.getItem('ids')
-  const params = removeEmptyProps(userInfo);
-  const {status, message,rows} = await request.post('/api/oa/user/apply/card/add',params, {
-    headers: {
-      Authorization: sessionStorage.getItem('myToken')
-    }
-  });
-  if (status == 200) {
-    // 处理完成后赋值给regionOptions
-    showToast("申请成功");
-    statusType = true
-    getData()
-  } else {
-    // 申请失败提示
-    showToast(message);
-  }
-};
+
 
 const onClickLeft = () => {
   let token = sessionStorage.getItem('myToken')
@@ -235,12 +142,20 @@ const onClickLeft = () => {
   <div class="bg">
     <van-nav-bar left-arrow left-text="返回"  @click-left="onClickLeft" title="入职查询" fixed :border="false"></van-nav-bar>
     <div class="top-data-group">
+      <van-loading v-if="loading" type="spinner" class="loading" vertical />
       <van-row  class="top-data-group__top">
+        
         <van-col span="19" class="statusTxt">
           <div>
-            <div class="userName">{{ userInfo.userName }}</div>
-            <p>入职2年8个月</p> 
-            <p>2次入职逐日集团</p>
+            <div class="userName">
+              {{ userInfo.userName }}
+              <template v-for="(item, index) in eduList" :key="index">
+                <van-tag type="primary" size="medium" style="margin: 0 10px;"  v-if="item.code == userInfo.education">{{ item.codeText }}</van-tag>
+              </template>
+              <van-tag type="primary" size="medium" v-if="userInfo.physicalDisability == 1">残疾人</van-tag>
+            </div>
+            <p>入职{{ userInfo.seniority }}</p> 
+            <p>{{ userInfo.numberOfEntries }}次入职逐日集团</p>
           </div>
         </van-col>
         <van-col span="5" style="display: flex; align-items: center;">
@@ -259,7 +174,8 @@ const onClickLeft = () => {
         <van-col span="24">
           <van-row>
             <van-col span="6">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</van-col>
-            <van-col span="18">{{ userInfo.deptName }}</van-col>
+            <van-col span="18" v-if="userInfo.sex == 1">男</van-col>
+            <van-col span="18" v-if="userInfo.sex == 2">女</van-col>
           </van-row>
         </van-col>
         <van-col span="24">
@@ -270,26 +186,35 @@ const onClickLeft = () => {
         </van-col>
         <van-col span="24">
           <van-row>
+            <van-col span="6">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;龄：</van-col>
+            <van-col span="18">{{ userInfo.age }}岁</van-col>
+          </van-row>
+        </van-col>
+        <van-col span="24">
+          <van-row>
             <van-col span="6">民&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;族：</van-col>
-            <van-col span="18">{{ userInfo.deptName }}</van-col>
+            <van-col span="18">{{ userInfo.nation }}</van-col>
           </van-row>
         </van-col>
         <van-col span="24">
           <van-row>
             <van-col span="6">籍&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;贯：</van-col>
-            <van-col span="18">{{ userInfo.deptName }}</van-col>
+            <van-col span="18">{{ userInfo.birthPlace }}</van-col>
           </van-row>
         </van-col>
-        <van-col span="24">
+        <van-col span="24" v-if="false">
           <van-row>
             <van-col span="6">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历：</van-col>
-            <van-col span="18">{{ userInfo.deptName }}</van-col>
+            <template v-for="(item, index) in eduList" :key="index">
+              <van-col span="18" v-if="item.code == userInfo.education">{{ item.codeText }}</van-col>
+            </template>
           </van-row>
         </van-col>
+        
         <van-col span="24">
           <van-row>
             <van-col span="6">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</van-col>
-            <van-col span="18">{{ userInfo.deptName }}</van-col>
+            <van-col span="18">{{ userInfo.companyEmail }}</van-col>
           </van-row>
         </van-col>
         <van-col span="24">
@@ -304,10 +229,17 @@ const onClickLeft = () => {
             <van-col span="18">{{ userInfo.jobName }}</van-col>
           </van-row>
         </van-col>
+        <van-col span="24" v-if="false">
+          <van-row>
+            <van-col span="6">是否残疾：</van-col>
+            <van-col span="18" v-if="userInfo.physicalDisability == 0">否</van-col>
+            <van-col span="18" v-if="userInfo.physicalDisability == 1">残疾人</van-col>
+          </van-row>
+        </van-col>
         <van-col span="24">
           <van-row>
             <van-col span="6">享有年假：</van-col>
-            <van-col span="18">{{ userInfo.userName }}</van-col>
+            <van-col span="18">{{ userInfo.annualLeave }}天</van-col>
           </van-row>
         </van-col>
         <!-- <van-col span="24">
@@ -349,6 +281,13 @@ const onClickLeft = () => {
   overflow-y: auto;
   padding-top: 46px;
 }
+.loading{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+}
 .top-data-group {
   padding-top: 28px;
   .top-data-group__top {
@@ -381,6 +320,8 @@ const onClickLeft = () => {
         font-size: 20px;
         font-weight: 600;
         margin-bottom: 5px;
+        display: flex  ;
+        align-items: center;
       }
       p{
         font-size: 14px;

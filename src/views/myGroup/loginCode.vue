@@ -100,6 +100,11 @@ const onSubmit = async (values) => {
       message: '登录成功',
       className: 'custom-toast',
     })
+    sessionStorage.clear();
+    // 缓存token
+    sessionStorage.setItem('myToken', data);
+    sessionStorage.setItem('userPhone', phone);
+    // 路由跳转->员工信息页面
     if (navType == 1) {
       // 路由跳转->员工信息页面
       router.push('/myGroup/employeeInfo');
@@ -107,11 +112,6 @@ const onSubmit = async (values) => {
       // 路由跳转->员工证
       router.push('/myGroup/index');
     }
-    
-    // 缓存token
-    sessionStorage.setItem('myToken', data);
-    sessionStorage.setItem('userPhone', phone);
-    // 路由跳转->员工信息页面
 
     
   } else {

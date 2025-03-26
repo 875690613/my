@@ -123,6 +123,18 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/oa\/user\/apply\/card/, '')
       },
+      // 我的集团--获取入职员工信息
+      '/api/third/user': {
+        target: 'http://58.215.206.250:7776/api/third/user',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/third\/user/, '')
+      },
+      // 我的集团--获取学历信息
+      '/api/admin/baseDic': {
+        target: 'http://58.215.206.250:7776/api/admin/baseDic',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/admin\/baseDic/, '')
+      },
       // 我的集团--获取员工信息二维码
       '/api/oa/personnelArchives': {
         target: 'http://58.215.206.250:7776/api/oa/personnelArchives',
