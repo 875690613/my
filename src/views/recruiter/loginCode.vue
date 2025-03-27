@@ -1,4 +1,4 @@
-<!-- 我的集团 -->
+<!-- 毕业生招聘官 -->
 <script setup>
 import { useRouter } from 'vue-router';
 import request from '@/utils/request';
@@ -11,7 +11,7 @@ let toast = $ref(null)
 let CountdownDisabled = $ref(true)
 let countdown = $ref('发送验证码')
 let second = $ref(0)//倒计时
-document.title = '我的集团';
+document.title = '毕业生招聘官';
 
 const router = useRouter();
 

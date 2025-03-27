@@ -7,7 +7,7 @@ import { showLoadingToast, closeToast,Overlay,DatePicker  } from 'vant';
 import axios from 'axios';
 import TextAvatar from '@/components/TextAvatar.vue';
 import dayjs from 'dayjs';
-document.title = '认证表单';
+document.title = '毕业生招聘官';
 
 const router = useRouter();
 const show = $ref(false);
@@ -156,6 +156,7 @@ const getData = async () => {
 };
 // 获取附件
 const getFile = async (name,key) => {
+  let isShowImg = true;
   const headers = {
       "Qeeker-Fashion-Token": sessionStorage.getItem('myToken'),
       responseType: 'blob' // 指定响应类型为 blob
@@ -164,9 +165,19 @@ const getFile = async (name,key) => {
       response => {
         //获取地址栏域名
 
-        // 学历
+        // 文件地址
         biographicalNotesUrl = window.location.protocol + window.location.host + response.config.url;
         console.log('请求 URL:',biographicalNotesUrl); // 获取完整的请求 URL
+        // 判断biographicalNotesUrl的文件格式
+        if (biographicalNotesUrl.endsWith('.jpg') || biographicalNotesUrl.endsWith('.png')) {
+          console.log('图片文件格式:', biographicalNotesUrl);
+        } else if (biographicalNotesUrl.endsWith('.pdf')) {
+          isShowImg = false;
+          console.log('PDF 文件格式:', biographicalNotesUrl);
+        } else {
+          isShowImg = false;
+          console.log('其他文件格式:', biographicalNotesUrl);
+        }
         return response;
       },
       error => {
@@ -189,7 +200,7 @@ const getFile = async (name,key) => {
         // biographicalNotesUrl = fileUrl
         fileList.push({
           url: biographicalNotesUrl,
-          // isImage: true
+          isImage: isShowImg
         });
         
 
@@ -200,21 +211,21 @@ const getFile = async (name,key) => {
         console.log('学历地址:', imageUrl);
         academicCertificateIdsList.push({
           url: imageUrl,
-          isImage: true
+          isImage: isShowImg
         });
       }
       if (name == 'zyzs') {
         console.log('职业证书:', imageUrl);
         professionalCertificateList.push({
           url: imageUrl,
-          isImage: true
+          isImage: isShowImg
         });
       }
       if (name == 'gzzm') {
         console.log('工作证明:', imageUrl);
         proofOfWorkSuccessList.push({
           url: imageUrl,
-          isImage: true
+          isImage: isShowImg
         });
       }
     })
@@ -366,6 +377,14 @@ const login = async () => {
 };
 
 // 简历上传
+const beforeRead = (file) => {
+  console.log('上传前file:',file);
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
+    showToast('请上传 jpg/png 格式图片');
+    return false;
+  }
+  return true;
+};
 const afterReadFile = (file,detail) => {
   // 此时可以自行将文件上传至服务器
   console.log('简历上传：',file,detail);
@@ -609,7 +628,7 @@ const onSubmit = async (values) => {
       <van-cell-group inset class="title-group">
         <div class="title">工作经历</div>
         <!-- 遮罩 -->
-        <van-overlay :show="state == 'show' && update == false">
+        <van-overlay :show="state == 'show' && update == false" v-if="false">
           <div class="wrapper" @click.stop>
             <van-cell-group inset class="title-group overlay">
               <p>想获取该招聘官完整信息请加入我们</p>
@@ -667,11 +686,11 @@ const onSubmit = async (values) => {
         
       </van-cell-group>
       <!-- 附件上传 -->
-      <van-cell-group inset class="title-group"  style="min-height: 150px;">
+      <van-cell-group inset class="title-group"  style="min-height: 0px;">
         <div class="title" v-if="state == 'add'">附件上传</div>
         <div class="title" v-if="state == 'show'">附件</div>
         <!-- 遮罩 -->
-        <van-overlay :show="state == 'show' && update == false">
+        <van-overlay :show="state == 'show' && update == false" v-if="false">
           <div class="wrapper" @click.stop>
             <van-cell-group inset class="title-group overlay">
               <p>想获取该招聘官完整信息请加入我们</p>
@@ -685,28 +704,28 @@ const onSubmit = async (values) => {
             <template #input>
               <van-uploader v-model="fileList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 1 : fileList.length" name="jl" :after-read="afterReadFile">
                 <template #preview-cover="{  }">
-                  <div class="preview-cover van-ellipsis"><a :href="biographicalNotesUrl"  download="简历" >下载</a></div>
+                  <!-- <div class="preview-cover van-ellipsis"><a :href="biographicalNotesUrl"  download="简历" >下载</a></div> -->
                 </template>
               </van-uploader>
             </template>
           </van-field>
           <van-field name="uploader" label="学历证书" label-align="top" v-if="(state == 'show' && academicCertificateIdsList.length > 0) || state == 'add'">
             <template #input>
-              <van-uploader v-model="academicCertificateIdsList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : academicCertificateIdsList.length" name="xl" :after-read="afterReadFile"/>
+              <van-uploader v-model="academicCertificateIdsList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : academicCertificateIdsList.length" name="xl" :before-read="beforeRead" :after-read="afterReadFile"/>
             </template>
           </van-field>
           <van-field name="uploader" label="人力资源相关职业资格证书" label-align="top" v-if="(state == 'show' && professionalCertificateList.length > 0) || state == 'add'">
             <template #input>
-              <van-uploader v-model="professionalCertificateList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : professionalCertificateList.length" name="zyzs" :after-read="afterReadFile"/>
+              <van-uploader v-model="professionalCertificateList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : professionalCertificateList.length" name="zyzs" :before-read="beforeRead" :after-read="afterReadFile"/>
             </template>
           </van-field>
           <van-field name="uploader" label="工作成功证明（如优秀招聘案例、相关培训证书）" label-align="top" v-if="(state == 'show' && proofOfWorkSuccessList.length > 0) || state == 'add'">
             <template #input>
-              <van-uploader v-model="proofOfWorkSuccessList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : proofOfWorkSuccessList.length" name="gzzm" :after-read="afterReadFile"/>
+              <van-uploader v-model="proofOfWorkSuccessList" :deletable="state == 'add'" accept="" :max-count="state == 'add' ? 5 : proofOfWorkSuccessList.length" name="gzzm"  :before-read="beforeRead" :after-read="afterReadFile"/>
             </template>
           </van-field>
-        <!-- </div> -->
-        <!-- <div v-else>无附件</div> -->
+        <!-- </div>
+        <div v-else>无附件</div> -->
       </van-cell-group>
       <div style="margin: 16px; padding-bottom: 50px;" v-if="(state == 'add' || update == true) && status == 0">
         <van-button round block type="primary" native-type="submit">
@@ -718,10 +737,10 @@ const onSubmit = async (values) => {
   
   </main>
   <footer v-if="state == 'show' && update == false">
-    <!-- <van-cell-group inset class="title-group">
+    <van-cell-group inset class="title-group">
       <p>想获取该招聘官完整信息请加入我们</p>
       <p><van-icon name="envelop-o" />：hr@supertexinternational.com</p>
-    </van-cell-group> -->
+    </van-cell-group>
   </footer>
   <!-- 选择性别 -->
   <van-popup v-model:show="showClient" position="bottom">
