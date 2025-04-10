@@ -167,16 +167,13 @@ const getFile = async (name,key) => {
 
         // 文件地址
         biographicalNotesUrl = window.location.protocol + window.location.host + response.config.url;
-        console.log('请求 URL:',biographicalNotesUrl); // 获取完整的请求 URL
+        // console.log('请求 URL:',biographicalNotesUrl); // 获取完整的请求 URL
         // 判断biographicalNotesUrl的文件格式
         if (biographicalNotesUrl.endsWith('.jpg') || biographicalNotesUrl.endsWith('.png')) {
-          console.log('图片文件格式:', biographicalNotesUrl);
         } else if (biographicalNotesUrl.endsWith('.pdf')) {
           isShowImg = false;
-          console.log('PDF 文件格式:', biographicalNotesUrl);
         } else {
           isShowImg = false;
-          console.log('其他文件格式:', biographicalNotesUrl);
         }
         return response;
       },
@@ -195,8 +192,6 @@ const getFile = async (name,key) => {
       if (name == 'jl') {
         const blob = new Blob([response.data], { type: 'application/octet-binary' });
         const fileUrl = URL.createObjectURL(blob); // 创建临时文件地址
-        console.log('简历文件地址:', fileUrl);
-        console.log('简历地址:', imageUrl);
         // biographicalNotesUrl = fileUrl
         fileList.push({
           url: biographicalNotesUrl,
@@ -208,21 +203,18 @@ const getFile = async (name,key) => {
         URL.revokeObjectURL(fileUrl);
       }
       if (name == 'xl') {
-        console.log('学历地址:', imageUrl);
         academicCertificateIdsList.push({
           url: imageUrl,
           isImage: isShowImg
         });
       }
       if (name == 'zyzs') {
-        console.log('职业证书:', imageUrl);
         professionalCertificateList.push({
           url: imageUrl,
           isImage: isShowImg
         });
       }
       if (name == 'gzzm') {
-        console.log('工作证明:', imageUrl);
         proofOfWorkSuccessList.push({
           url: imageUrl,
           isImage: isShowImg
