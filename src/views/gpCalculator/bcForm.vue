@@ -207,8 +207,8 @@
     <van-action-bar class="action-bar">
       <van-action-bar-icon icon="chat-o" text="客服" @click="toChat" />
       <!-- <van-action-bar-icon icon="shop-o" text="店铺" /> -->
-      <van-action-bar-button v-if="value1 == 1" @click="rest" color="#1989faad" type="warning" text="重置" />
-      <van-action-bar-button v-if="value1 == 1" @click="save" color="#1989fa" type="danger" text="保存" />
+      <van-action-bar-button v-if="value1 == 1" @click="rest" size="small" color="#1989faad" type="warning" text="重置" />
+      <van-action-bar-button v-if="value1 == 1" @click="save" size="small" color="#1989fa" type="danger" text="保存" />
     </van-action-bar>
 
   </div>
