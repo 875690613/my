@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- 头部 -->
-    <van-nav-bar title="计算器" fixed left-arrow left-text="返回" @click-left="onClickLeft">
+    <van-nav-bar title="计算器" fixed left-arrow left-text="返回" @click-left="onClickLeft" :border="true">
       <template #right>
         <van-dropdown-menu>
           <van-dropdown-item v-model="value1" :options="option1" @change="value1 = $event"/>
@@ -12,14 +12,15 @@
     <!-- <van-nav-bar :title="headerTitle" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft" /> -->
     <!-- 主体内容 -->
     <div class="content">
-      <div v-if="value1 === 0">
+      <div v-if="value1 === 0" style="background: #fff;">
 
         <van-cell-group inset class="section">
           <van-field
             v-model.number="dividend"
-            label="产量"
+            label="会员卡面额"
             type="number"
-            placeholder="请输入产量"
+            placeholder="请输入会员卡面额"
+            clearable
           />
           <!-- <van-field
             v-model="divisor"
@@ -27,11 +28,11 @@
             type="number"
             placeholder="产出天数"
           /> -->
-          产出天数：<van-stepper v-model="divisor" />
+          产出周期(天)：<van-stepper v-model="divisor" />
         </van-cell-group>
         <div class="result">
           <h3 v-if="divisor !== 0">
-            计算结果：{{ dividend }} ÷ {{ divisor }} = {{ result }}
+            每天产出：{{ dividend }} ÷ {{ divisor }} = {{ result }}
           </h3>
           <h3 v-else class="error">
             {{ result }}
@@ -203,11 +204,11 @@
     </div>
 
     <!-- 底部动作栏 -->
-    <van-action-bar v-if="value1 == 0" class="action-bar">
+    <van-action-bar class="action-bar">
       <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-button @click="rest" color="#1989faad" type="warning" text="重置" />
-      <van-action-bar-button @click="save" color="#1989fa" type="danger" text="保存" />
+      <!-- <van-action-bar-icon icon="shop-o" text="店铺" /> -->
+      <van-action-bar-button v-if="value1 == 1" @click="rest" color="#1989faad" type="warning" text="重置" />
+      <van-action-bar-button v-if="value1 == 1" @click="save" color="#1989fa" type="danger" text="保存" />
     </van-action-bar>
 
   </div>
@@ -260,14 +261,14 @@ const rest = () => {
 const value1 = $ref(2); // 计算器选择
 // 计算器选项
 const option1 = [
-  { text: '计算器0', value: 0 },
-  { text: '计算器1', value: 1 },
-  { text: '计算器2', value: 2 },
-  { text: '计算器3', value: 3 },
+  { text: '信用分产值计算器', value: 0 },
+  { text: '股票补仓计算器', value: 1 },
+  { text: 'DCP计算器', value: 2 },
+  // { text: '计算器3', value: 3 },
 ];
 const checked = $ref([]);
 const dividend = $ref(0)  // 被除数
-const divisor = $ref(1)   // 除数
+const divisor = $ref(30)   // 除数
 
 // 计算dcp
 const dcpCount = () => {
@@ -453,6 +454,7 @@ const onClickLeft = () => {
 }
 
 .content {
+  margin-top: 20px;
   padding: 0 12px;
 }
 
@@ -490,5 +492,9 @@ const onClickLeft = () => {
 }
 >>>.van-stepper__input {
   background: #fff;
+}
+.van-action-bar {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
