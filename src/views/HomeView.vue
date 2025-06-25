@@ -4,7 +4,7 @@ document.title = '工具列表';
 // 工具列表
 let listData = $ref([
   {
-    title: 'DCP变现计算器',
+    title: 'DCP计算器',
     icon: 'gold-coin-o',
     path: '/gpCalculator/bcForm'
   },
