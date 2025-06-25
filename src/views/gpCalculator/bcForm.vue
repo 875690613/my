@@ -205,7 +205,7 @@
 
     <!-- 底部动作栏 -->
     <van-action-bar class="action-bar">
-      <van-action-bar-icon icon="chat-o" text="客服" />
+      <van-action-bar-icon icon="chat-o" text="客服" @click="toChat" />
       <!-- <van-action-bar-icon icon="shop-o" text="店铺" /> -->
       <van-action-bar-button v-if="value1 == 1" @click="rest" color="#1989faad" type="warning" text="重置" />
       <van-action-bar-button v-if="value1 == 1" @click="save" color="#1989fa" type="danger" text="保存" />
@@ -435,13 +435,19 @@ const removePosition = (index) => {
   state.localStorageObj.positionsList = state.positionsList;
   // localStorage.setItem('localStorageObj', JSON.stringify(state.localStorageObj));
 };
+const toChat = () => { 
+  var page = "m208887"
+  let copy = (e)=>{
+      e.preventDefault()
+      e.clipboardData.setData('text/plain',page)
+      showToast('微信号复制成功,赶紧去添加吧');
+      document.removeEventListener('copy',copy)
+  }
+  document.addEventListener('copy',copy)
+  document.execCommand("Copy");
+}
 // 导航-返回
 const onClickLeft = () => {
-    // if (step.value == 0) {
-    //     history.back();
-    // } else {
-    //     goBack();
-    // }
     history.back();
 }
 </script>
@@ -490,7 +496,7 @@ const onClickLeft = () => {
   flex: 2;
   text-align: right;
 }
->>>.van-stepper__input {
+:deep(.van-stepper__input) {
   background: #fff;
 }
 .van-action-bar {
