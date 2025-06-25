@@ -12,6 +12,9 @@ import postcsspxtoviewport from 'postcss-px-to-viewport'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  publicPath: '/my/', // 例如：'/my-vue-app/', // 替换为你的仓库名称，如果你的项目部署在 GitHub Pages 上，则需要设置此项以正确加载资源。例如：'/your-repo-name/'
+
+  base: '/my/', // 替换为你的仓库名称，如果你的项目部署在 GitHub Pages 上，则需要设置此项以正确加载资源。例如：'/your-repo-name/'
   plugins: [
     vue(),
     ReactivityTransform(),

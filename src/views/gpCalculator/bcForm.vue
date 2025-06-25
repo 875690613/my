@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- 头部 -->
-    <van-nav-bar title="计算器" fixed >
+    <van-nav-bar title="计算器" fixed left-arrow left-text="返回" @click-left="onClickLeft">
       <template #right>
         <van-dropdown-menu>
           <van-dropdown-item v-model="value1" :options="option1" @change="value1 = $event"/>
@@ -9,7 +9,7 @@
 
       </template>
     </van-nav-bar>
-
+    <!-- <van-nav-bar :title="headerTitle" fixed :border="false" left-arrow left-text="返回" @click-left="onClickLeft" /> -->
     <!-- 主体内容 -->
     <div class="content">
       <div v-if="value1 === 0">
@@ -203,7 +203,7 @@
     </div>
 
     <!-- 底部动作栏 -->
-    <van-action-bar>
+    <van-action-bar v-if="value1 == 0" class="action-bar">
       <van-action-bar-icon icon="chat-o" text="客服" />
       <van-action-bar-icon icon="shop-o" text="店铺" />
       <van-action-bar-button @click="rest" color="#1989faad" type="warning" text="重置" />
@@ -434,6 +434,15 @@ const removePosition = (index) => {
   state.localStorageObj.positionsList = state.positionsList;
   // localStorage.setItem('localStorageObj', JSON.stringify(state.localStorageObj));
 };
+// 导航-返回
+const onClickLeft = () => {
+    // if (step.value == 0) {
+    //     history.back();
+    // } else {
+    //     goBack();
+    // }
+    history.back();
+}
 </script>
 
 <style scoped>
