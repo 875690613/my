@@ -1,0 +1,1 @@
+import{r as a}from"./request-BzyPSYD6.js";const e={getBrandAuth:t=>a.get("/api/yibum/basicInformation/shop/getBrandAuth",{...t}),getBrandList:t=>a.get("/api/yibum/p/brand/page",{...t})};export{e as default};

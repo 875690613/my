@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>我的福利</title>
+  <script type="module" crossorigin src="/assets/index-Ca3J3ala.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DaBdfNED.css">
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  (function (draftWidth, n) {
+    function getRem() {
+      var html = document.querySelector("html");
+      // console.log('body: ' + document.body.clientWidth);
+      // console.log('el:' + document.body.clientWidth);
+      var w = document.body.clientWidth || document.documentElement.clientWidth;
+      var rem = (w / draftWidth) * n;
+      //  html.style.fontSize = rem + "px !important";
+      html.setAttribute("style", "font-size:" + rem + "px !important;")
+    }
+    getRem();
+    window.addEventListener("resize", function () {
+      getRem();
+    });
+  })(750, 100);
+</script>
+
+</html>
